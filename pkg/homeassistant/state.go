@@ -1,6 +1,12 @@
 package homeassistant
 
-import "time"
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/url"
+	"time"
+)
 
 type EntityState struct {
 	EntityID    string         `json:"entity_id"`
@@ -17,7 +23,25 @@ type EntityState struct {
 
 // GetStates returns the states of all entities.
 func (c *Client) GetStates() ([]*EntityState, error) {
-	return nil, nil
+	req := &http.Request{
+		Method: http.MethodGet,
+		URL:    c.baseURL.ResolveReference(&url.URL{Path: "/api/states"}),
+		Header: c.getHeaders(),
+	}
+	res, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to get states: %s", res.Status)
+	}
+	defer res.Body.Close()
+	var states []*EntityState
+	err = json.NewDecoder(res.Body).Decode(&states)
+	if err != nil {
+		return nil, err
+	}
+	return states, nil
 }
 
 // GetState returns the state of an entity.

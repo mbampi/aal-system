@@ -39,6 +39,13 @@ func (c *Client) SetLongLivedAccessToken(longLivedAccessToken string) {
 	c.longLivedAccessToken = longLivedAccessToken
 }
 
+// SetTimeout sets the timeout for the HTTP client.
+func (c *Client) SetTimeout(timeout time.Duration) {
+	c.httpClient.Timeout = timeout
+}
+
+// getHeaders returns the headers for the HTTP client,
+// which includes the authorization header.
 func (c *Client) getHeaders() http.Header {
 	header := http.Header{}
 	header.Add("Authorization", "Bearer "+c.longLivedAccessToken)
@@ -61,9 +68,4 @@ func (c *Client) IsConnected() bool {
 		return false
 	}
 	return true
-}
-
-// SetTimeout sets the timeout for the HTTP client.
-func (c *Client) SetTimeout(timeout time.Duration) {
-	c.httpClient.Timeout = timeout
 }
