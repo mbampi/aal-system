@@ -2,7 +2,6 @@ package sparql
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"time"
@@ -55,41 +54,4 @@ func (c *Client) IsConnected() bool {
 		return false
 	}
 	return true
-}
-
-func (c *Client) Query(query string) (map[string]any, error) {
-	sparqlURL := c.baseURL.ResolveReference(
-		&url.URL{
-			Path: fmt.Sprintf("/%s/sparql", c.dataset),
-		})
-	req := &http.Request{
-		Method: http.MethodGet,
-		URL:    sparqlURL,
-		Header: map[string][]string{
-			"Accept": {"*/*"},
-		},
-	}
-	q := req.URL.Query()
-	q.Add("query", query)
-	req.URL.RawQuery = q.Encode()
-	fmt.Println(req.URL.RawQuery)
-
-	res, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("error sending request: %w", err)
-	}
-	if res.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("error response from server: %s", res.Status)
-	}
-	defer res.Body.Close()
-	bytes, _ := io.ReadAll(res.Body)
-	fmt.Printf("%s", bytes)
-
-	var response map[string]any
-	// err = json.NewDecoder(res.Body).Decode(&response)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("error decoding response: %w", err)
-	// }
-
-	return response, nil
 }

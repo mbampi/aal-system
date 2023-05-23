@@ -45,16 +45,24 @@ func main() {
 		logger.Debugf(" - %s : %s : %s", state.EntityID, state.State, state.Attributes["friendly_name"])
 	}
 
+	logger.Debug("Getting SPARQL stats")
+	stats, err := sparqlServer.GetStats()
+	if err != nil {
+		logger.Fatal("Failed to get SPARQL stats:", err)
+	}
+	logger.Info("Got SPARQL stats")
+	logger.Debugf(" - %v", stats)
+
 	logger.Debug("Doing SPARQL Query")
 	query := `PREFIX owl: <http://www.w3.org/2002/07/owl%23>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema%23>
-SELECT DISTINCT ?class ?label ?description
-WHERE {
-	?class a owl:Class.
-	OPTIONAL { ?class rdfs:label ?label}
-	OPTIONAL { ?class rdfs:comment ?description}
-}
-LIMIT 10`
+	PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema%23>
+	SELECT DISTINCT ?class ?label ?description
+	WHERE {
+	  ?class a owl:Class.
+	  OPTIONAL { ?class rdfs:label ?label}
+	  OPTIONAL { ?class rdfs:comment ?description}
+	}
+	LIMIT 10`
 
 	results, err := sparqlServer.Query(query)
 	if err != nil {
