@@ -2,13 +2,13 @@
 # AAL System
 Ontology-Based Health Monitoring System For Ambient Assisted Living
 
----
 ## Description
 
 The goal of this system is to be a semantic connector between Smart Home IoT data and a Health ontology.
-Enabling SPARQL queries to be smartly performed, providing information for a better AAL management.
+Enabling SPARQL queries to be smartly performed with the reasoning engine, providing information for a better AAL management.
 
----
+![system architecture](sys-architecture.png "System Architecture")
+
 ## System capabilities:
 
 - [X] Connects to Home Assistant (Smart Home)
@@ -22,11 +22,11 @@ Enabling SPARQL queries to be smartly performed, providing information for a bet
 - [ ] Build a docker compose to run the Apache Jena Server and the AAL System
 - [ ] Serve REST api to allow client connection
 
----
 ## Using
 
 - run Apache Jena Fuseki server with the SNOMED CT ontology
+  - ```fuseki-server --config=config.ttl```
 - connect the machine in the same network as Home Assistant 
   - Home Assistant API should be enabled
-- execute
+- run this system
   - ```go run main.go```
