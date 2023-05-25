@@ -1,4 +1,4 @@
-package sparql
+package fuseki
 
 import (
 	"fmt"
@@ -7,14 +7,14 @@ import (
 	"time"
 )
 
-// Client is a SPARQL client.
+// Client is a Apache Jena Fuseki client.
 type Client struct {
 	httpClient *http.Client
 	baseURL    *url.URL
 	dataset    string
 }
 
-// NewClient creates a new SPARQL client.
+// NewClient creates a new Apache Jena Fuseki client.
 func NewClient(dataset string) *Client {
 	defaultBaseURL := url.URL{
 		Scheme: "http",
@@ -30,7 +30,7 @@ func NewClient(dataset string) *Client {
 	}
 }
 
-// SetBaseURL sets the base URL of the SPARQL server.
+// SetBaseURL sets the base URL of the Apache Jena Fuseki server.
 func (c *Client) SetBaseURL(baseURL string) error {
 	parsedBaseURL, err := url.Parse(baseURL)
 	if err != nil {
@@ -40,7 +40,7 @@ func (c *Client) SetBaseURL(baseURL string) error {
 	return nil
 }
 
-// IsConnected returns true if the client is connected to SPARQL.
+// IsConnected returns true if the client is connected to Apache Jena Fuseki.
 func (c *Client) IsConnected() bool {
 	req := &http.Request{
 		Method: http.MethodGet,

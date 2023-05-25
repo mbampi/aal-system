@@ -1,4 +1,4 @@
-package sparql
+package fuseki
 
 import (
 	"encoding/json"
@@ -26,7 +26,7 @@ type Stats struct {
 	} `json:"datasets"`
 }
 
-// GetStats gets the stats from the SPARQL server.
+// GetStats gets the stats from the Apache Jena Fuseki server.
 func (c *Client) GetStats() (*Stats, error) {
 	endpoint := c.baseURL.ResolveReference(
 		&url.URL{

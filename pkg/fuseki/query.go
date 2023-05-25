@@ -1,4 +1,4 @@
-package sparql
+package fuseki
 
 import (
 	"encoding/json"
@@ -17,16 +17,12 @@ func (c *Client) Query(query string) (map[string]any, error) {
 	req := &http.Request{
 		Method: http.MethodGet,
 		URL:    sparqlURL,
-		Header: map[string][]string{
-			"Accept": {"*/*"},
-		},
+		Header: http.Header{"Accept": {"application/json"}},
 	}
 
 	encoded := url.QueryEscape(query)
 	encoded = strings.ReplaceAll(encoded, "%25", "%")
-
 	req.URL.RawQuery = fmt.Sprintf("query=%s", encoded)
-	fmt.Println(req.URL.String())
 
 	res, err := c.httpClient.Do(req)
 	if err != nil {
