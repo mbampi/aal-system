@@ -4,6 +4,7 @@ import (
 	"aalsystem/pkg/fuseki"
 	"aalsystem/pkg/homeassistant"
 	"bytes"
+	"encoding/json"
 	"os"
 	"os/exec"
 	"regexp"
@@ -73,7 +74,7 @@ func main() {
 		logger.Fatal("Failed to do SPARQL query:", err)
 	}
 	logger.Info("Got SPARQL results")
-	logger.Debugf(" - %v", results)
+	logger.Debugf(" - %s", prettyfy(results))
 }
 
 // getWIFIName returns the name of the WIFI network the computer is connected to.
@@ -100,4 +101,13 @@ func getWIFIName() string {
 	name := strings.SplitN(match[1], " ", 2)[1]
 
 	return name
+}
+
+// prettyfy prints the given object in a pretty format.
+func prettyfy(obj interface{}) string {
+	b, err := json.MarshalIndent(obj, "", "  ")
+	if err != nil {
+		return ""
+	}
+	return string(b)
 }
