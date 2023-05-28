@@ -3,6 +3,7 @@ package main
 import (
 	"aalsystem/pkg/fuseki"
 	"aalsystem/pkg/homeassistant"
+	"aalsystem/pkg/snomed"
 	"bytes"
 	"encoding/json"
 	"os"
@@ -60,15 +61,7 @@ func main() {
 	logger.Debugf(" - %v", stats)
 
 	logger.Debug("Doing SPARQL Query")
-	query := `PREFIX owl: <http://www.w3.org/2002/07/owl%23>
-	PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema%23>
-	SELECT DISTINCT ?class ?label ?description
-	WHERE {
-	  ?class a owl:Class.
-	  OPTIONAL { ?class rdfs:label ?label}
-	  OPTIONAL { ?class rdfs:comment ?description}
-	}
-	LIMIT 10`
+	query := snomed.SubclassesOf(snomed.BodyTemperature)
 	results, err := sparqlServer.Query(query)
 	if err != nil {
 		logger.Fatal("Failed to do SPARQL query:", err)
