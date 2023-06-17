@@ -15,6 +15,8 @@ Enabling SPARQL queries to be smartly performed with the reasoning engine, provi
 - [X] Request entities state from Home Assistant
 - [X] Connects to Apache Jena Fuseki (SPARQL Server)
 - [X] Queries SPARQL Server
+- [X] Dockerize Apache Jena Fuseki Server
+- [ ] Dockerize AAL System
 - [ ] CRUD of instances/data in RDF graph database
 - [ ] Add/Remove SPARQL queries
 - [ ] Run SPARQL queries regularly
