@@ -7,6 +7,7 @@ import (
 	"net/url"
 )
 
+// Service is a Home Assistant service.
 type Service struct {
 	Domain   string           `json:"domain"`
 	Services []map[string]any `json:"services"`
