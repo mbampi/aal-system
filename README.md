@@ -24,9 +24,12 @@ Enabling SPARQL queries to be smartly performed with the reasoning engine, provi
 
 ## Using
 
-- run Apache Jena Fuseki server with the SNOMED CT ontology
-  - ```fuseki-server --config=config.ttl```
-- connect the machine in the same network as Home Assistant 
+### connect the machine in the same network as Home Assistant 
   - Home Assistant API should be enabled
-- run this system
+
+### run Apache Jena Fuseki server with the SNOMED CT ontology
+  - ```docker build -t fuseki -f fuseki.Dockerfile .```
+  - ```docker run -p 3030:3030 fuseki```
+
+### run the AAL system
   - ```go run main.go```
