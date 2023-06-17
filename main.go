@@ -52,13 +52,13 @@ func main() {
 		logger.Debugf(" - %s : %s : %s", state.EntityID, state.State, state.Attributes["friendly_name"])
 	}
 
-	logger.Debug("Getting SPARQL stats")
-	stats, err := sparqlServer.GetStats()
+	logger.Debug("Getting SPARQL status")
+	status, err := sparqlServer.GetStatus()
 	if err != nil {
-		logger.Fatal("Failed to get SPARQL stats:", err)
+		logger.Fatal("Failed to get SPARQL status:", err)
 	}
-	logger.Info("Got SPARQL stats")
-	logger.Debugf(" - %v", stats)
+	logger.Info("Got SPARQL status")
+	logger.Debugf("%s", prettyfy(status))
 
 	logger.Debug("Doing SPARQL Query")
 	query := snomed.SubclassesOf(snomed.BodyTemperature)
@@ -67,7 +67,7 @@ func main() {
 		logger.Fatal("Failed to do SPARQL query:", err)
 	}
 	logger.Info("Got SPARQL results")
-	logger.Debugf(" - %s", prettyfy(results))
+	logger.Debugf("%s", prettyfy(results))
 }
 
 // getWIFIName returns the name of the WIFI network the computer is connected to.
