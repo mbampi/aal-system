@@ -1,0 +1,45 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ja:    <http://jena.hpl.hp.com/2005/11/Assembler#> .
+@prefix fuseki: <http://jena.apache.org/fuseki#> .
+@prefix tdb:   <http://jena.hpl.hp.com/2008/tdb#> .
+@prefix :      <#> .
+
+# Define the dataset
+:dataset rdf:type ja:RDFDataset ;
+    ja:defaultGraph [
+        rdf:type ja:InfModel ;
+        ja:baseModel <#data> ;
+        ja:reasoner [
+            ja:reasonerURL <http://jena.hpl.hp.com/2003/GenericRuleReasoner>
+        ]
+    ] ;
+    .
+
+# Define the base model (RDF data)
+<#data> rdf:type ja:MemoryModel ;
+    ja:content [ ja:externalContent "/fuseki/snomed-ct.ttl" ] ;
+    .
+
+# Specify the TDB assembler for persistent storage (optional)
+# Uncomment the following lines if you want to use TDB for persistent storage
+#:tdbDataset rdf:type tdb:DatasetTDB ;
+#    tdb:location "DB" ;
+#    tdb:unionDefaultGraph true ;
+#    .
+
+# Define the server
+[] rdf:type fuseki:Server ;
+    fuseki:services (
+        <#service>
+    ) ;
+    .
+
+# Define the service
+<#service> rdf:type fuseki:Service ;
+    fuseki:name "med" ;
+    fuseki:serviceQuery "sparql" ;
+    fuseki:serviceUpdate "update" ;
+    fuseki:dataset :dataset ;
+    fuseki:allowDatasetUpdate true ;
+    .
