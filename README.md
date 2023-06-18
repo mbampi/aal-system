@@ -26,12 +26,36 @@ Enabling SPARQL queries to be smartly performed with the reasoning engine, provi
 
 ## Using
 
-### connect the machine in the same network as Home Assistant 
-  - Home Assistant API should be enabled
+### Pre-requisites
+- [Docker](https://docs.docker.com/engine/install/)
+- [Task](https://taskfile.dev/#/installation)
+- [Go](https://golang.org/doc/install)
+- [Home Assistant](https://www.home-assistant.io/docs/installation/)
+  - Should be running (usually in a Raspberry Pi) in the same network as this machine 
+  - Should have the [RESTful API](https://www.home-assistant.io/integrations/rest/) enabled
 
-### run Apache Jena Fuseki server with the SNOMED CT ontology
-  - ```docker build -t fuseki -f fuseki.Dockerfile .```
-  - ```docker run -p 3030:3030 fuseki```
+### Environment variables
 
-### run the AAL system
-  - ```go run main.go```
+```bash
+HASSIO_TOKEN=<your home assistant token>
+```
+
+##
+
+### Build
+
+```bash
+task build
+```
+
+### Run
+
+```bash
+task up
+```
+
+### Stop
+
+```bash
+task down
+```
