@@ -18,7 +18,7 @@
 
 # Define the base model (RDF data)
 <#data> rdf:type ja:MemoryModel ;
-    ja:content [ ja:externalContent "/fuseki/snomed-ct.ttl" ] ;
+    ja:content [ ja:externalContent "/fuseki/snomedct.ttl" ] ;
     .
 
 # Specify the TDB assembler for persistent storage (optional)
