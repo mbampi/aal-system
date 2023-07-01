@@ -5,7 +5,7 @@ tasks:
   build:
     description: "Builds the fuseki image and the go binary"
     cmds:
-      - docker build --progress=plain --tag fuseki --file fuseki.Dockerfile .
+      - docker build --progress=plain --tag fuseki --file fuseki-server/fuseki.Dockerfile .
       - go build -v ./...
 
   up:
