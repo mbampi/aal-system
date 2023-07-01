@@ -11,7 +11,7 @@
         rdf:type ja:InfModel ;
         ja:baseModel <#data> ;
         ja:reasoner [
-            ja:reasonerURL <http://jena.hpl.hp.com/2003/GenericRuleReasoner>
+            ja:reasonerClass "openllet.jena.PelletReasonerFactory" ;
         ]
     ] ;
     .
@@ -40,6 +40,9 @@
     fuseki:name "med" ;
     fuseki:serviceQuery "sparql" ;
     fuseki:serviceUpdate "update" ;
+    fuseki:serviceUpload "upload" ;
+    fuseki:serviceReadWriteGraphStore "data" ;
+    fuseki:serviceReadGraphStore "get" ;
     fuseki:dataset :dataset ;
     fuseki:allowDatasetUpdate true ;
     .

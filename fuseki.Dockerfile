@@ -15,6 +15,9 @@ RUN wget https://downloads.apache.org/jena/binaries/apache-jena-fuseki-4.8.0.tar
     tar xzf apache-jena-fuseki-4.8.0.tar.gz && \
     rm apache-jena-fuseki-4.8.0.tar.gz
 
+# Copy Openllet reasoner jar files
+COPY ./openllet-jars /fuseki/run/extra
+
 # Copy the configuration file
 COPY ./config.ttl /fuseki/config.ttl
 COPY ./snomedct.ttl /fuseki/snomedct.ttl

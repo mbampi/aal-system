@@ -16,6 +16,8 @@ Enabling SPARQL queries to be smartly performed with the reasoning engine, provi
 - [X] Connects to Apache Jena Fuseki (SPARQL Server)
 - [X] Queries SPARQL Server
 - [X] Dockerize Apache Jena Fuseki Server
+- [X] Add Openllet Reasoner to Apache Jena Fuseki Server
+- [ ] Insert rules in Fuseki via REST API
 - [ ] Dockerize AAL System
 - [ ] CRUD of instances/data in RDF graph database
 - [ ] Add/Remove SPARQL queries
@@ -58,4 +60,10 @@ task up
 
 ```bash
 task down
+```
+
+### Update
+
+```bash
+task update
 ```
