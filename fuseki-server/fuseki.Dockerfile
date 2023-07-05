@@ -20,7 +20,7 @@ COPY /fuseki-server/openllet-jars /fuseki/run/extra
 
 # Copy the configuration file
 COPY /fuseki-server/config.ttl /fuseki/config.ttl
-COPY /fuseki-server/snomedct.ttl /fuseki/snomedct.ttl
+COPY /fuseki-server/aal-ontology.ttl /fuseki/aal-ontology.ttl
 
 # Expose port for Fuseki
 EXPOSE 3030
