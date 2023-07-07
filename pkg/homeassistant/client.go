@@ -1,9 +1,12 @@
 package homeassistant
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 // Client is a Home Assistant client.
@@ -11,6 +14,7 @@ type Client struct {
 	httpClient           *http.Client
 	baseURL              *url.URL
 	longLivedAccessToken string
+	wsConn               *websocket.Conn
 }
 
 // NewClient creates a new Home Assistant client.
@@ -68,4 +72,18 @@ func (c *Client) IsConnected() bool {
 		return false
 	}
 	return true
+}
+
+func (c *Client) websocketURL() string {
+	return fmt.Sprintf("ws://%s/api/websocket", c.baseURL.Host)
+}
+
+// InitWebsocket initializes the websocket connection.
+func (c *Client) InitWebsocket() error {
+	conn, _, err := websocket.DefaultDialer.Dial(c.websocketURL(), c.getHeaders())
+	if err != nil {
+		return fmt.Errorf("error connecting to websocket: %w", err)
+	}
+	c.wsConn = conn
+	return nil
 }
