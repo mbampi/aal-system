@@ -67,3 +67,32 @@ task down
 ```bash
 task update
 ```
+
+## High-level AAL System Overview
+
+Pre-requisites:
+- There is a patient
+- The patient lives in a house
+- The house has sensors
+- The sensors are connected to a smart home system (e.g. home assistant)
+- The smart home system has an API
+
+Installation:
+  - Gather information about the sensors in the house (may install new sensors if needed)
+  - Install the AAL System
+  - Configure the AAL System with the environment and sensors information
+  - Connect the AAL System to the smart home system API (to get sensor data)
+  - Connect the AAL System to the EHR system (to get patient data)
+  - Based on the patient data, the AAL System will activate the monitoring rules to be used
+  
+Usage:
+  - The doctor will use the EHR system to update the patient data
+  - The AAL System will update automatically 
+    - with the new patient data (e.g. new medication)
+    - new sensor data (e.g. heart rate)
+  - New rules can be added to the AAL System
+  - AAL System will
+    - provide real-time information about the patient health status (which can be used by the doctor/caregiver to make decisions)
+    - provide historical information about the patient health status
+    - send alerts based on the rules
+    - take actions on the smart home actuators based on the rules
