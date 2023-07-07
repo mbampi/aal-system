@@ -1,4 +1,4 @@
-package aalontology
+package aal
 
 // PatientDiseases returns a SPARQL query that returns the diseases of the given patient.
 // The patient is identified by its id.

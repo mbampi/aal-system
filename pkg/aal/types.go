@@ -1,4 +1,4 @@
-package aalontology
+package aal
 
 type Query string
 

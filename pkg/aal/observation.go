@@ -1,4 +1,4 @@
-package aalontology
+package aal
 
 type Observation struct {
 	ID        string

@@ -1,4 +1,4 @@
-package aalontology
+package aal
 
 import "fmt"
 
