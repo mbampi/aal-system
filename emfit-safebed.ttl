@@ -1,0 +1,66 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix qudt-unit: <http://qudt.org/vocab/unit/> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix ssn: <http://www.w3.org/ns/ssn/> .
+@prefix dogont: <http://elite.polito.it/ontologies/dogont.owl#> .
+@prefix snomed: <http://snomed.info/id/> .
+
+@prefix : <http://aal-ontology.com.br> .
+
+@base <http://example.org/data/> .
+
+<house/1> a dogont:Building ;
+  rdfs:comment "The house is a building."@en ;
+  :hasRoom <bedroom/1> , <livingroom/1> .
+
+<bedroom/1> a dogont:Room;
+  rdfs:comment "The bedroom is the patient's room."@en ;
+  :hasThing <bed/1> .
+
+<livingroom/1> a dogont:Room;
+  rdfs:comment "The livingroom is the living room of the house."@en .
+
+<bed/1> a ssn:Platform , dogont:BuildingThing;
+  rdfs:comment "The bed is a platform for the emfitqs sensor."@en ;
+  sosa:hosts <emfitqs/1> .
+
+<patient/1> a :Patient ;
+  rdfs:comment "The patient is a person."@en ;
+  :hasName "John Doe" ;
+  :wasBornIn "1980-01-01"^^xsd:date ;
+  :hasGender "male" .
+  :livesIn <house/1> .
+
+<emfitqs/1> a ssn:System ;
+  rdfs:comment "emfitqs sensor #1 contains a respiratoryrate and a heartrate sensor."@en ;
+  rdfs:seeAlso <https://sleepgadgets.io/emfit-qs/> ;
+  ssn:hasSubSystem <emfitqs/1#HeartRateSensor>, <emfitqs/1#RespiratoryRateSensor> .
+
+<emfitqs/1#HeartRateSensor> a sosa:Sensor , ssn:System ;
+  rdfs:comment "The embedded heartrate sensor."@en ;
+  ssn:observes <snomed:HeartRate> ;
+  ssn:hasFeatureOfInterest <patient/1> .
+
+<emfitqs/1#RespiratoryRateSensor> a sosa:Sensor , ssn:System ;
+  rdfs:comment "The embedded respiratoryrate sensor."@en ;
+  ssn:observes <snomed:RespiratoryRate> ;
+  ssn:hasFeatureOfInterest <patient/1> .
+
+<observation/1> rdf:type sosa:Observation ;
+  sosa:madeBySensor <emfitqs/1#HeartRateSensor> .
+  sosa:hasResult [
+    a qudt:QuantityValue ;
+    qudt:numericValue "90"^^xsd:integer ;
+    qudt:unit qudt-unit:BeatsPerMinute ] ;
+  sosa:resultTime "2018-01-01T00:00:00Z"^^xsd:dateTime .
+
+<observation/2> rdf:type sosa:Observation ;
+  sosa:madeBySensor <emfitqs/1#RespiratoryRateSensor> .
+  sosa:hasResult [
+    a qudt:QuantityValue ;
+    qudt:numericValue "50"^^xsd:integer ;
+    qudt:unit qudt-unit:BREATH-PER-MIN ] ;
+  sosa:resultTime "2018-02-05T00:00:00Z"^^xsd:dateTime .
