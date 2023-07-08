@@ -13,6 +13,9 @@ type Sensor struct {
 	FeatureOfInterest  URI // Patient, Room, etc
 	ObservableProperty URI // HeartRate, Temperature, etc
 	InstalledAt        URI // Patient, Room, Bed, Window, etc
+
+	ValueField string // Field of the Home Assistant state object that contains the value of the observable property
+	Unit       string // Unit of the observable property
 }
 
 type Actuator struct {

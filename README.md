@@ -18,10 +18,12 @@ Enabling SPARQL queries to be smartly performed with the reasoning engine, provi
 - [X] Dockerize Apache Jena Fuseki Server
 - [X] Add Openllet Reasoner to Apache Jena Fuseki Server
 - [X] Websocket connection to Home Assistant
-- [ ] Insert rules in Fuseki via REST API
-- [ ] Add/Remove SPARQL queries to Fuseki via REST API
+- [ ] Load phyisical environment from config file
+- [ ] Load patient data from config file
+- [ ] Add/Remove/Update SPARQL queries to Fuseki via REST API
 - [ ] Run queries only when sensor data changed
-- [ ] Serve REST api to allow client connection
+- [ ] Insert SWRL rules in Fuseki via REST API
+- [ ] Serve REST API to allow client connection
 - [ ] Dockerize AAL System
 - [ ] Build a docker compose to run the Apache Jena Server and the AAL System
 
