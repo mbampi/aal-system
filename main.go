@@ -1,15 +1,11 @@
 package main
 
 import (
+	"aalsystem/pkg/aal"
 	"aalsystem/pkg/fuseki"
 	"aalsystem/pkg/homeassistant"
-	"aalsystem/pkg/snomed"
-	"bytes"
-	"encoding/json"
+	"aalsystem/pkg/utils"
 	"os"
-	"os/exec"
-	"regexp"
-	"strings"
 
 	"github.com/sirupsen/logrus"
 )
@@ -29,7 +25,7 @@ func main() {
 	hass := homeassistant.NewClient()
 	hass.SetLongLivedAccessToken(accessToken)
 	if !hass.IsConnected() {
-		logger.Warnf("Is your HomeAssistant also connected to network \"%s\" ?", getWIFIName())
+		logger.Warnf("Is your HomeAssistant also connected to network \"%s\" ?", utils.GetWIFIName())
 		logger.Fatal("Failed to connect to Home Assistant")
 	}
 	logger.Info("Connected to Home Assistant")
@@ -42,65 +38,36 @@ func main() {
 	}
 	logger.Info("Connected to SPARQL")
 
-	logger.Debug("Getting Home Assistant states")
-	states, err := hass.GetStates()
+	aalManager := aal.NewManager(hass, sparqlServer, logger)
+	err := aalManager.Run()
 	if err != nil {
-		logger.Fatal("Failed to get Home Assistant states:", err)
-	}
-	logger.Info("Got Home Assistant states")
-	for _, state := range states {
-		logger.Debugf(" - %s : %s : %s", state.EntityID, state.State, state.Attributes["friendly_name"])
+		logger.Fatal("Failed to run AAL system:", err)
 	}
 
-	logger.Debug("Getting SPARQL status")
-	status, err := sparqlServer.GetStatus()
-	if err != nil {
-		logger.Fatal("Failed to get SPARQL status:", err)
-	}
-	logger.Info("Got SPARQL status")
-	logger.Debugf("%s", prettyfy(status))
+	// logger.Debug("Getting Home Assistant states")
+	// states, err := hass.GetStates()
+	// if err != nil {
+	// 	logger.Fatal("Failed to get Home Assistant states:", err)
+	// }
+	// logger.Info("Got Home Assistant states")
+	// for _, state := range states {
+	// 	logger.Debugf(" - %s : %s : %s", state.EntityID, state.State, state.Attributes["friendly_name"])
+	// }
 
-	logger.Debug("Doing SPARQL Query")
-	query := snomed.SubclassesOf(snomed.BodyTemperature)
-	results, err := sparqlServer.Query(query)
-	if err != nil {
-		logger.Fatal("Failed to do SPARQL query:", err)
-	}
-	logger.Info("Got SPARQL results")
-	logger.Debugf("%s", prettyfy(results))
-}
+	// logger.Debug("Getting SPARQL status")
+	// status, err := sparqlServer.GetStatus()
+	// if err != nil {
+	// 	logger.Fatal("Failed to get SPARQL status:", err)
+	// }
+	// logger.Info("Got SPARQL status")
+	// logger.Debugf("%s", prettyfy(status))
 
-// getWIFIName returns the name of the WIFI network the computer is connected to.
-// This function is only implemented for macOS.
-func getWIFIName() string {
-	const osxCmd = "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport"
-	const osxArgs = "-I"
-
-	cmd := exec.Command(osxCmd, osxArgs)
-	stdout := bytes.NewBuffer(nil)
-	cmd.Stdout = stdout
-
-	err := cmd.Run()
-	if err != nil {
-		return ""
-	}
-
-	output := strings.TrimSpace(stdout.String())
-	r := regexp.MustCompile(`SSID:\s*(.+)`)
-	match := r.FindStringSubmatch(output)
-	if len(match) < 2 {
-		return ""
-	}
-	name := strings.SplitN(match[1], " ", 2)[1]
-
-	return name
-}
-
-// prettyfy prints the given object in a pretty format.
-func prettyfy(obj interface{}) string {
-	b, err := json.MarshalIndent(obj, "", "  ")
-	if err != nil {
-		return ""
-	}
-	return string(b)
+	// logger.Debug("Doing SPARQL Query")
+	// query := snomed.SubclassesOf(snomed.BodyTemperature)
+	// results, err := sparqlServer.Query(query)
+	// if err != nil {
+	// 	logger.Fatal("Failed to do SPARQL query:", err)
+	// }
+	// logger.Info("Got SPARQL results")
+	// logger.Debugf("%s", prettyfy(results))
 }

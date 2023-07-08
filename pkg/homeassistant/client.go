@@ -11,9 +11,9 @@ import (
 
 // Client is a Home Assistant client.
 type Client struct {
-	httpClient           *http.Client
 	baseURL              *url.URL
 	longLivedAccessToken string
+	httpClient           *http.Client
 	wsConn               *websocket.Conn
 }
 
@@ -85,5 +85,34 @@ func (c *Client) InitWebsocket() error {
 		return fmt.Errorf("error connecting to websocket: %w", err)
 	}
 	c.wsConn = conn
+
+	// Read the initial response.
+	var result websocketResult
+	err = c.wsConn.ReadJSON(&result)
+	if err != nil {
+		return fmt.Errorf("error reading websocket response: %w", err)
+	}
+	if result.Type != "auth_required" {
+		return fmt.Errorf("unexpected websocket response: %v", result)
+	}
+
+	// Authenticate.
+	err = c.wsConn.WriteJSON(map[string]string{
+		"type":         "auth",
+		"access_token": c.longLivedAccessToken,
+	})
+	if err != nil {
+		return fmt.Errorf("error authenticating websocket: %w", err)
+	}
+
+	// Read the authentication response.
+	err = c.wsConn.ReadJSON(&result)
+	if err != nil {
+		return fmt.Errorf("error reading websocket response: %w", err)
+	}
+	if result.Type != "auth_ok" {
+		return fmt.Errorf("error authenticating websocket: %v", result)
+	}
+
 	return nil
 }
