@@ -11,10 +11,15 @@ import (
 
 // Event represents a Home Assistant event.
 type Event struct {
-	ID         int            `json:"id"`
-	EntityID   string         `json:"entity_id"`
-	Attributes map[string]any `json:"attributes"`
-	TimeFired  time.Time      `json:"time_fired"`
+	ID          int            `json:"id"`
+	EntityID    string         `json:"entity_id"`
+	State       string         `json:"state"`
+	Attributes  map[string]any `json:"attributes"`
+	LastChanged time.Time      `json:"time_fired"`
+}
+
+func (e *Event) ShortString() string {
+	return fmt.Sprintf("%s: %s", e.EntityID, e.State)
 }
 
 type wsEvent struct {
@@ -102,10 +107,11 @@ func (c *Client) ListenEvents() (<-chan Event, error) {
 // wsEventToEvent converts a websocket event to a Event.
 func wsEventToEvent(event wsEvent) Event {
 	return Event{
-		ID:         event.ID,
-		EntityID:   event.Event.Data.EntityID,
-		Attributes: event.Event.Data.NewState.Attributes,
-		TimeFired:  event.Event.TimeFired,
+		ID:          event.ID,
+		EntityID:    event.Event.Data.EntityID,
+		State:       event.Event.Data.NewState.State,
+		Attributes:  event.Event.Data.NewState.Attributes,
+		LastChanged: event.Event.Data.NewState.LastChanged,
 	}
 }
 
@@ -135,4 +141,15 @@ func (c *Client) GetEvents() ([]*restEvent, error) {
 		return nil, err
 	}
 	return events, nil
+}
+
+// EventFromState creates an event from a state.
+func EventFromState(state *EntityState) *Event {
+	return &Event{
+		ID:          0,
+		EntityID:    state.EntityID,
+		Attributes:  state.Attributes,
+		State:       state.State,
+		LastChanged: state.LastChanged,
+	}
 }

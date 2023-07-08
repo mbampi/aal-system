@@ -43,13 +43,3 @@ func (c *Client) GetStates() ([]*EntityState, error) {
 	}
 	return states, nil
 }
-
-// GetState returns the state of an entity.
-func (c *Client) GetState(entityID string) (*EntityState, error) {
-	return nil, nil
-}
-
-// SetState sets the state of an entity.
-func (c *Client) SetState(entityID string, state string) error {
-	return nil
-}

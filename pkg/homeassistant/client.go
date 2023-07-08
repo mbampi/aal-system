@@ -86,7 +86,7 @@ func (c *Client) InitWebsocket() error {
 	}
 	c.wsConn = conn
 
-	// Read the initial response.
+	// Read the initial response
 	var result websocketResult
 	err = c.wsConn.ReadJSON(&result)
 	if err != nil {
@@ -96,7 +96,7 @@ func (c *Client) InitWebsocket() error {
 		return fmt.Errorf("unexpected websocket response: %v", result)
 	}
 
-	// Authenticate.
+	// Authenticate
 	err = c.wsConn.WriteJSON(map[string]string{
 		"type":         "auth",
 		"access_token": c.longLivedAccessToken,
@@ -105,7 +105,7 @@ func (c *Client) InitWebsocket() error {
 		return fmt.Errorf("error authenticating websocket: %w", err)
 	}
 
-	// Read the authentication response.
+	// Read the authentication response
 	err = c.wsConn.ReadJSON(&result)
 	if err != nil {
 		return fmt.Errorf("error reading websocket response: %w", err)

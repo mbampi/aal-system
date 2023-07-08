@@ -37,7 +37,15 @@ func (m *Manager) AddSensor(sensor *Sensor) {
 func (m *Manager) Run() error {
 	m.logger.Info("Starting AAL System")
 
-	err := m.hass.InitWebsocket()
+	// Load initial state of all sensors
+	err := m.loadInitialStates()
+	if err != nil {
+		return fmt.Errorf("failed to get initial state of sensors: %w", err)
+	}
+	m.logger.Info("Got initial state of all sensors")
+
+	// Listen to Home Assistant events
+	err = m.hass.InitWebsocket()
 	if err != nil {
 		return fmt.Errorf("failed to inititalize Home Assistant websocket connection: %w", err)
 	}
@@ -45,14 +53,31 @@ func (m *Manager) Run() error {
 	if err != nil {
 		return fmt.Errorf("failed to listen to Home Assistant events: %w", err)
 	}
+
+	// Handle Home Assistant events
 	for {
 		event, ok := <-events
 		if !ok {
 			return fmt.Errorf("home Assistant events channel closed")
 		}
-		m.logger.Debugf("- Got event: %s", utils.Prettyfy(event))
-		m.handleStateChangeEvent(&event)
+		m.logger.Debugf("- Got event: %s", event.ShortString())
+		// m.handleStateChangeEvent(&event)
 	}
+}
+
+// loadInitialStates loads the initial state of all sensors.
+func (m *Manager) loadInitialStates() error {
+	m.logger.Debug("Getting initial state of all sensors")
+	states, err := m.hass.GetStates()
+	if err != nil {
+		return fmt.Errorf("failed to get initial state of all sensors: %w", err)
+	}
+	for _, state := range states {
+		event := homeassistant.EventFromState(state)
+		m.logger.Debugf("- Initial state: %s", event.ShortString())
+		// m.handleStateChangeEvent(event)
+	}
+	return nil
 }
 
 // handleStateChangeEvent handles a state change event from Home Assistant.
@@ -61,7 +86,7 @@ func (m *Manager) handleStateChangeEvent(event *homeassistant.Event) {
 	obs := Observation{
 		ID:       fmt.Sprint(event.ID),
 		SensorID: event.EntityID,
-		Value:    fmt.Sprint(event.Attributes[sensor.ValueField]),
+		Value:    event.State,
 		Unit:     sensor.Unit,
 	}
 
