@@ -42,13 +42,9 @@ func main() {
 	}
 	logger.Info("Connected to SPARQL")
 
+	// AAL System
 	aalManager := aal.NewManager(hass, sparqlServer, logger)
-
-	// TODO: Create patient
-
-	// TODO: Create physical environment
-
-	// TODO: Create sensors and actuators
+	aalManager.AddSensor("sensor.heart_rate", "emfit_heartrate")
 
 	err := aalManager.Run()
 	if err != nil {

@@ -124,6 +124,7 @@
 :emfit rdf:type owl:NamedIndividual ,
                 <http://www.w3.org/ns/sosa/Sensor> ;
        :madeObservation :matheus_heartrate_obs ;
+       <http://www.w3.org/ns/sosa/observes> :HeartRate ;
        <http://www.w3.org/ns/sosa/madeObservation> :matheus_heartrate_obs .
 
 

@@ -3,8 +3,8 @@ package aal
 import (
 	"aalsystem/pkg/fuseki"
 	"aalsystem/pkg/homeassistant"
-	"aalsystem/pkg/utils"
 	"fmt"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -15,7 +15,7 @@ type Manager struct {
 	sparql *fuseki.Client
 	logger *logrus.Logger
 
-	sensors map[string]*Sensor // map of sensors, indexed by sensor ID
+	sensors map[string]string // home assistant entity id -> ontology sensor id
 }
 
 // NewManager creates a new AAL system manager.
@@ -27,9 +27,10 @@ func NewManager(hass *homeassistant.Client, sparql *fuseki.Client, logger *logru
 	}
 }
 
-// AddSensor adds a sensor to the AAL system.
-func (m *Manager) AddSensor(sensor *Sensor) {
-	m.sensors[sensor.ID] = sensor
+// AddSensor adds a new sensor to the AAL system.
+func (m *Manager) AddSensor(entityID, sensorID string) {
+	m.logger.Debugf("Adding sensor: %s (%s)", sensorID, entityID)
+	m.sensors[entityID] = sensorID
 }
 
 // Run starts the AAL system.
@@ -75,26 +76,33 @@ func (m *Manager) loadInitialStates() error {
 	for _, state := range states {
 		event := homeassistant.EventFromState(state)
 		m.logger.Debugf("- Initial state: %s", event.ShortString())
-		// m.handleStateChangeEvent(event)
+		m.handleStateChangeEvent(event)
 	}
 	return nil
 }
 
 // handleStateChangeEvent handles a state change event from Home Assistant.
 func (m *Manager) handleStateChangeEvent(event *homeassistant.Event) {
-	sensor := m.sensors[event.EntityID]
+	sensorID, ok := m.sensors[event.EntityID]
+	if !ok {
+		m.logger.Debugf("Sensor %s not found", event.EntityID)
+		return
+	}
+
 	obs := Observation{
-		ID:       fmt.Sprint(event.ID),
-		SensorID: event.EntityID,
-		Value:    event.State,
-		Unit:     sensor.Unit,
+		ID:        fmt.Sprint(event.ID),
+		SensorID:  sensorID,
+		Value:     event.State,
+		Timestamp: time.Now(),
 	}
 
 	query := obs.InsertQuery()
+	m.logger.Debugf("Inserting observation: %s", query)
 
-	res, err := m.sparql.Query(string(query))
+	err := m.sparql.Update(string(query))
 	if err != nil {
 		m.logger.Errorf("Failed to insert observation: %s", err)
+		return
 	}
-	m.logger.Debugf("Inserted observation: %s", utils.Prettyfy(res))
+	m.logger.Debugf("Inserted observation")
 }
