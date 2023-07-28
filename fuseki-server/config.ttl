@@ -11,7 +11,12 @@
         rdf:type ja:InfModel ;
         ja:baseModel <#data> ;
         ja:reasoner [
-            ja:reasonerClass "openllet.jena.PelletReasonerFactory" ;
+            # Pellet reasoner
+            # ja:reasonerClass "openllet.jena.PelletReasonerFactory" ;
+
+            # Jena rules
+            ja:reasonerURL <http://jena.hpl.hp.com/2003/GenericRuleReasoner> ;
+            ja:rulesFrom <file:/fuseki/swrl.rules> ;
         ]
     ] ;
     .

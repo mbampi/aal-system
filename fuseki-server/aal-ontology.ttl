@@ -127,7 +127,7 @@
 :Matheus rdf:type owl:NamedIndividual ,
                   :Patient ;
          :hasMedicalCondition :MatheusDiabetes ;
-         :wears :emfit ;
+         :wears :emfit_heartrate ;
          <http://xmlns.com/foaf/0.1/name> "Matheus" .
 
 
@@ -136,8 +136,8 @@
                           :Diabetes .
 
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#emfit
-:emfit rdf:type owl:NamedIndividual ,
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#emfit_heartrate
+:emfit_heartrate rdf:type owl:NamedIndividual ,
                 <http://www.w3.org/ns/sosa/Sensor> ;
        :madeObservation :matheus_heartrate_obs ;
        <http://www.w3.org/ns/sosa/observes> :HeartRate ;
@@ -147,7 +147,7 @@
 ###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#matheus_heartrate_obs
 :matheus_heartrate_obs rdf:type owl:NamedIndividual ,
                                 <http://www.w3.org/ns/sosa/Observation> ;
-                       <http://www.w3.org/ns/sosa/madeBySensor> :emfit ;
+                       <http://www.w3.org/ns/sosa/madeBySensor> :emfit_heartrate ;
                        <http://www.w3.org/ns/sosa/observes> :HeartRate ;
                        <http://www.w3.org/ns/sosa/hasSimpleResult> 80 .
 
