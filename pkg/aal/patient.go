@@ -1,11 +1,42 @@
 package aal
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"io"
+	"os"
+	"time"
+)
 
+// Patient represents a patient in the AAL system.
+// It is a wrapper around the patient entity in the ontology.
+// It is responsible for creating the patient entity in the ontology.
 type Patient struct {
-	ID   string
-	Name string
-	Age  int
+	ID                              string    `json:"id"`
+	Name                            string    `json:"name"`
+	BirthDate                       time.Time `json:"birth_date"`
+	HasDiseases                     []URI     `json:"has_disease"`
+	TakesMedications                []URI     `json:"takes_mdication"`
+	HasPropensityToAdverseReactions []URI     `json:"has_propensity_to_adverse_reaction"`
+}
+
+// NewPatientFromFile creates a new patient from a JSON file.
+func NewPatientFromFile(id, filename string) (*Patient, error) {
+	var patient *Patient
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open patient file: %w", err)
+	}
+	data, err := io.ReadAll(file)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read patient file: %w", err)
+	}
+	err = json.Unmarshal(data, &patient)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse patient file: %w", err)
+	}
+	patient.ID = id
+	return patient, nil
 }
 
 func (p *Patient) InsertQuery() Query {
@@ -15,7 +46,8 @@ func (p *Patient) InsertQuery() Query {
 	INSERT DATA {
 		:patient_` + p.ID + ` rdf:type :Patient .
 		:patient_` + p.ID + ` :hasName "` + p.Name + `" .
-		:patient_` + p.ID + ` :hasAge "` + fmt.Sprint(p.Age) + `" .
+		:patient_` + p.ID + ` :hasBirtDate "` + fmt.Sprint(p.BirthDate) + `" .
+		:patient_` + p.ID + ` :hasID "` + p.ID + `" .
 	}`)
 }
 
