@@ -21,9 +21,10 @@ type Manager struct {
 // NewManager creates a new AAL system manager.
 func NewManager(hass *homeassistant.Client, sparql *fuseki.Client, logger *logrus.Logger) *Manager {
 	return &Manager{
-		hass:   hass,
-		sparql: sparql,
-		logger: logger,
+		hass:    hass,
+		sparql:  sparql,
+		logger:  logger,
+		sensors: map[string]string{},
 	}
 }
 
