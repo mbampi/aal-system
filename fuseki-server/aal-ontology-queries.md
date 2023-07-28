@@ -135,3 +135,15 @@ WHERE {
 ORDER BY DESC(?obs)
 LIMIT 1
 ```
+
+### Query all alarms
+
+```sparql
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
+
+SELECT ?t
+WHERE {
+  ?t rdf:type :Trigger .
+}
+```
