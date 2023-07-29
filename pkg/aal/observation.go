@@ -1,6 +1,7 @@
 package aal
 
 import (
+	"fmt"
 	"strings"
 	"time"
 )
@@ -13,6 +14,7 @@ type Observation struct {
 }
 
 func (o *Observation) InsertQuery() Query {
+	obsID := fmt.Sprintf("obs_%s_%s", o.SensorID, o.ID)
 	builder := strings.Builder{}
 
 	builder.WriteString(`PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>` + "\n")
@@ -21,10 +23,10 @@ func (o *Observation) InsertQuery() Query {
 	builder.WriteString(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>` + "\n")
 
 	builder.WriteString("INSERT DATA {" + "\n")
-	builder.WriteString(`	:observation_` + o.ID + ` rdf:type sosa:Observation .` + "\n")
-	builder.WriteString(`	:observation_` + o.ID + ` sosa:hasSimpleResult ` + o.Value + ` .` + "\n")
-	builder.WriteString(`	:observation_` + o.ID + ` sosa:madeBySensor :` + o.SensorID + ` .` + "\n")
-	builder.WriteString(`	:observation_` + o.ID + ` sosa:resultTime "` + o.Timestamp.Format("2006-01-02T15:04:05") + `"^^xsd:dateTime .` + "\n")
+	builder.WriteString(`	:` + obsID + ` rdf:type sosa:Observation .` + "\n")
+	builder.WriteString(`	:` + obsID + ` sosa:hasSimpleResult ` + o.Value + ` .` + "\n")
+	builder.WriteString(`	:` + obsID + ` sosa:madeBySensor :` + o.SensorID + ` .` + "\n")
+	builder.WriteString(`	:` + obsID + ` sosa:resultTime "` + o.Timestamp.Format("2006-01-02T15:04:05") + `"^^xsd:dateTime .` + "\n")
 	builder.WriteString("}")
 
 	return Query(builder.String())

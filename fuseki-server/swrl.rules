@@ -5,8 +5,26 @@
 @prefix sosa: <http://www.w3.org/ns/sosa/> .
 @prefix : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/> .
 
-# if the heart rate is above 85, trigger
-[heartRateRule: (?o rdf:type sosa:Observation) (?o sosa:observes :HeartRate) (?o sosa:hasSimpleResult ?r) greaterThan(?r, 85)  -> (?o rdf:type :Trigger)]
+# General rules
 
 # if an observation is made by a sensor that observes heart rate, then the observation also observes heart rate
-[observesInference: (?o rdf:type sosa:Observation) (?o sosa:madeBySensor ?s) (?s sosa:observes :HeartRate) -> (?o sosa:observes :HeartRate)]
+[observesInference: 
+    (?o rdf:type sosa:Observation) 
+    (?o sosa:madeBySensor ?s) 
+    (?s sosa:observes :HeartRate) 
+    -> 
+    (?o sosa:observes :HeartRate)
+]
+
+
+# Medical rules
+
+# if the heart rate is above 81, trigger
+[heartRateRule: 
+    (?o rdf:type sosa:Observation) 
+    (?o sosa:observes :HeartRate) 
+    (?o sosa:hasSimpleResult ?r) 
+    greaterThan(?r, 81) 
+    -> 
+    (?o rdf:type :Trigger)
+]

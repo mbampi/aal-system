@@ -14,16 +14,9 @@ type QueryResult struct {
 		Vars []string `json:"vars"`
 	} `json:"head"`
 	Results struct {
-		Bindings []struct {
-			Label struct {
-				Type    string `json:"type"`
-				Value   string `json:"value"`
-				XMLLang string `json:"xml:lang"`
-			} `json:"label"`
-			X struct {
-				Type  string `json:"type"`
-				Value string `json:"value"`
-			} `json:"x"`
+		Bindings []map[string]struct {
+			Type  string `json:"type"`
+			Value string `json:"value"`
 		} `json:"bindings"`
 	} `json:"results"`
 }
