@@ -6,14 +6,15 @@ tasks:
     description: "Builds the fuseki image and the go binary"
     cmds:
       - docker build --progress=plain --tag fuseki --file fuseki-server/fuseki.Dockerfile .
-      - go build -v ./...
+      - cd backend && go mod tidy
+      - cd backend && go build -v ./...
 
   up:
     description: "Starts the fuseki container and waits for it to be ready to run the aal service"
     cmds:
       - docker run -d -p 3030:3030 --name fuseki-server fuseki 
       - bash -c "while ! curl -s http://localhost:3030/$/ping; do sleep 1; done"
-      - go run main.go
+      - cd backend && go run main.go
   
   down:
     description: "Stops and removes the fuseki container"

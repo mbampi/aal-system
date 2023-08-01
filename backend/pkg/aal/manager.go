@@ -143,7 +143,6 @@ func (m *Manager) insertObservation(obs *Observation) error {
 	if err != nil {
 		return err
 	}
-	m.logger.Debugf("Inserted observation")
 	return nil
 }
 

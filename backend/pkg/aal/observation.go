@@ -14,7 +14,7 @@ type Observation struct {
 }
 
 func (o *Observation) InsertQuery() Query {
-	obsID := fmt.Sprintf("obs_%s_%s", o.SensorID, o.ID)
+	obsID := fmt.Sprintf("obs_%s", o.SensorID)
 	builder := strings.Builder{}
 
 	builder.WriteString(`PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>` + "\n")

@@ -27,22 +27,24 @@ type Actuator struct {
 }
 
 func (s *Sensor) InsertQuery() Query {
+	sensorID := "sensor_" + s.ID
 	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
 	INSERT DATA {
-		:sensor_` + s.ID + ` rdf:type :Sensor .
-		:sensor_` + s.ID + ` :hasName "` + s.Name + `" .
-		:sensor_` + s.ID + ` :observes :` + string(s.ObservableProperty) + ` .
-		:sensor_` + s.ID + ` :hasFeatureOfInterest :` + string(s.FeatureOfInterest) + ` .
-		:sensor_` + s.ID + ` :locatedAt :` + string(s.InstalledAt) + ` .
+		:` + sensorID + ` rdf:type :Sensor .
+		:` + sensorID + ` :hasName "` + s.Name + `" .
+		:` + sensorID + ` :observes :` + string(s.ObservableProperty) + ` .
+		:` + sensorID + ` :hasFeatureOfInterest :` + string(s.FeatureOfInterest) + ` .
+		:` + sensorID + ` :locatedAt :` + string(s.InstalledAt) + ` .
 	}`)
 }
 
 func (s *Sensor) RemoveQuery() Query {
+	sensorID := "sensor_" + s.ID
 	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
 	DELETE {
-		:sensor_` + s.ID + ` ?p ?o .
+		:` + sensorID + ` ?p ?o .
 	}
 	WHERE {
-		:sensor_` + s.ID + ` ?p ?o .
+		:` + sensorID + ` ?p ?o .
 	}`)
 }
