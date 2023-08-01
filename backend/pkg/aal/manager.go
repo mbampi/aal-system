@@ -119,11 +119,12 @@ func (m *Manager) handleStateChangeEvent(event *homeassistant.Event) error {
 
 	// Insert observation into ontology
 	m.logger.Debugf("Inserting observation: %s (%s)", obs.SensorID, obs.Value)
+	startTime := time.Now()
 	err := m.insertObservation(&obs)
 	if err != nil {
 		return fmt.Errorf("failed to insert observation: %w", err)
 	}
-	m.logger.Debugf("Inserted observation: %s (%s)", obs.SensorID, obs.Value)
+	m.logger.Debugf("Inserted observation: %s (%s) in %s", obs.SensorID, obs.Value, time.Since(startTime))
 
 	// Check trigger
 	m.logger.Trace("Checking triggers activated by rules")
@@ -174,28 +175,5 @@ WHERE {
 	// 	// TODO: run action/alarm
 	// }
 
-	err = m.DeleteTriggers()
-	if err != nil {
-		return fmt.Errorf("failed to delete triggers: %w", err)
-	}
-	m.logger.Debugf("Deleted triggers")
-
-	return nil
-}
-
-// DeleteTriggers deletes all triggers from the ontology.
-func (m *Manager) DeleteTriggers() error {
-	query := `
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
-
-DELETE WHERE {
-	  ?s rdf:type :Trigger .
-}`
-
-	err := m.sparql.Update(query)
-	if err != nil {
-		return err
-	}
 	return nil
 }
