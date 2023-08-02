@@ -13,7 +13,7 @@ import (
 func main() {
 	// Logger
 	logger := logrus.New()
-	logger.SetLevel(logrus.DebugLevel)
+	logger.SetLevel(logrus.InfoLevel)
 	logger.Info("Starting AAL System")
 
 	// Environment variables

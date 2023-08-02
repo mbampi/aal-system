@@ -27,6 +27,14 @@
     (?o sosa:hasFeatureOfInterest ?foi)
 ]
 
+# if an observation inferred a finding, then the finding was inferred by the observation
+[inferenceInference: 
+    (?o rdf:type sosa:Observation) 
+    (?o :inferred ?f) 
+    -> 
+    (?f :inferredBy ?o)
+]
+
 
 # ---------------------------------------------
 #               Medical Rules
@@ -34,13 +42,58 @@
 
 # if the heart rate is above 80 trigger a heartrate event
 # associate the event with the observation that triggered it
-[heartRateRule: 
+[TachycardiaRule:
     (?o rdf:type sosa:Observation) 
     (?o sosa:observes :HeartRate) 
     (?o sosa:hasSimpleResult ?r) 
     greaterThan(?r, 80)
-    (?o sosa:resultTime ?t)
+    (?patient rdf:type :Patient)
     -> 
-    (:triggerHeartrate rdf:type :Trigger)
-    (:triggerHeartrate :inferredBy ?o)
+    (?patient :hasFinding :Tachycardia)
+    (?o :inferred :Tachycardia)
+]
+
+# if the heart rate is below 75 trigger a heartrate event
+# associate the event with the observation that triggered it
+[BradycardiaRule:
+    (?o rdf:type sosa:Observation) 
+    (?o sosa:observes :HeartRate) 
+    (?o sosa:hasSimpleResult ?r) 
+    lessThan(?r, 75)
+    (?patient rdf:type :Patient)
+    -> 
+    (?patient :hasFinding :Bradycardia)
+    (?o :inferred :Bradycardia)
+]
+
+# if the patient has diabetes and the blood glucose is above 200 trigger a hyperglycemia finding
+# associate the finding with the observation that triggered it
+[HyperglycemiaRule:
+    (?patient rdf:type :Patient)
+    (?patient :hasMedicalCondition :Diabetes)
+    (?patient :wears ?s)
+    (?o rdf:type sosa:Observation)
+    (?o sosa:madeBySensor ?s)
+    (?o sosa:observes :BloodGlucose)
+    (?o sosa:hasSimpleResult ?r)
+    greaterThan(?r, 200)
+    -> 
+    (?patient :hasFinding :Hyperglycemia)
+    (?o :inferred :Hyperglycemia)
+]
+
+# if the patient has diabetes and the blood glucose is below 70 trigger a hypoglycemia finding
+# associate the finding with the observation that triggered it
+[HypoglycemiaRule:
+    (?patient rdf:type :Patient)
+    (?patient :hasMedicalCondition :Diabetes)
+    (?patient :wears ?s)
+    (?o rdf:type sosa:Observation)
+    (?o sosa:madeBySensor ?s)
+    (?o sosa:observes :BloodGlucose)
+    (?o sosa:hasSimpleResult ?r)
+    lessThan(?r, 70)
+    -> 
+    (?patient :hasFinding :Hypoglycemia)
+    (?o :inferred :Hypoglycemia)
 ]

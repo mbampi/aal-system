@@ -4,6 +4,7 @@ import (
 	"aalsystem/pkg/fuseki"
 	"aalsystem/pkg/homeassistant"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -124,15 +125,15 @@ func (m *Manager) handleStateChangeEvent(event *homeassistant.Event) error {
 	if err != nil {
 		return fmt.Errorf("failed to insert observation: %w", err)
 	}
-	m.logger.Debugf("Inserted observation: %s (%s) in %s", obs.SensorID, obs.Value, time.Since(startTime))
+	m.logger.Infof("Inserted observation: sensor=%s value=%s (%s)", obs.SensorID, obs.Value, time.Since(startTime))
 
-	// Check trigger
-	m.logger.Trace("Checking triggers activated by rules")
-	err = m.checkTriggers()
+	// Check finding
+	m.logger.Trace("Checking findings activated by rules")
+	err = m.checkFindings()
 	if err != nil {
-		return fmt.Errorf("failed to check triggers: %w", err)
+		return fmt.Errorf("failed to check findings: %w", err)
 	}
-	m.logger.Trace("Checked triggers activated by rules")
+	m.logger.Trace("Checked fidings activated by rules")
 	return nil
 }
 
@@ -147,16 +148,20 @@ func (m *Manager) insertObservation(obs *Observation) error {
 	return nil
 }
 
-// checkTriggers checks if any trigger was activated by the SWRL rules.
-func (m *Manager) checkTriggers() error {
+// checkFindings checks if any finding was inferred by the SWRL rules.
+func (m *Manager) checkFindings() error {
 	query := `
 PREFIX sosa: <http://www.w3.org/ns/sosa/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
 
-SELECT ?s
+SELECT ?patientName ?finding ?value
 WHERE {
-  ?s rdf:type :Trigger .
+  ?patient :hasFinding ?finding .
+  ?patient foaf:name ?patientName .
+  ?finding :inferredBy ?observation .
+  ?obs sosa:hasSimpleResult ?value .
 }`
 	res, err := m.sparql.Query(query)
 	if err != nil {
@@ -165,15 +170,21 @@ WHERE {
 
 	bindings := res.Results.Bindings
 	if len(bindings) == 0 {
-		m.logger.Debugf("No triggers activated")
+		m.logger.Debugf("No findings found")
 		return nil
 	}
 
-	m.logger.Debugf("Got triggers: %v", bindings)
-	// for _, binding := range res.Results.Bindings {
-	// 	m.logger.Debugf("+ Action triggered: %v", binding)
-	// 	// TODO: run action/alarm
-	// }
+	m.logger.Debugf("Got findings: %v", bindings)
+	for _, binding := range res.Results.Bindings {
+		finding := binding["finding"].Value
+		finding = finding[strings.LastIndex(finding, "/")+1:]
+
+		patient := binding["patientName"].Value
+		value := binding["value"].Value
+
+		m.logger.Infof("+ Finding: %s has %s (%s)", patient, finding, value)
+		// TODO: run action/alarm
+	}
 
 	return nil
 }
