@@ -4,7 +4,6 @@ import (
 	"aalsystem/pkg/fuseki"
 	"aalsystem/pkg/homeassistant"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -138,45 +137,21 @@ func (m *Manager) insertObservation(obs *Observation) error {
 
 // checkFindings checks if any finding was inferred by the SWRL rules.
 func (m *Manager) checkFindings() error {
-	query := `
-PREFIX sosa: <http://www.w3.org/ns/sosa/>
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
-
-SELECT ?patientName ?finding ?value
-WHERE {
-  ?patient :hasFinding ?finding .
-  ?patient foaf:name ?patientName .
-  ?finding :inferredBy ?observation .
-  ?obs sosa:hasSimpleResult ?value .
-}`
+	query := findingsQuery()
 	res, err := m.sparql.Query(query)
 	if err != nil {
 		return err
 	}
 
-	bindings := res.Results.Bindings
-	if len(bindings) == 0 {
+	m.logger.Debugf("Got %d findings: %v", len(*&res.Results.Bindings), res)
+	findings := resultToFindings(*res)
+	if len(findings) == 0 {
 		m.logger.Debugf("No findings found")
 		return nil
 	}
-
-	m.logger.Debugf("Got findings: %v", bindings)
-	for _, binding := range res.Results.Bindings {
-		finding := binding["finding"].Value
-		finding = finding[strings.LastIndex(finding, "/")+1:]
-
-		patient := binding["patientName"].Value
-		value := binding["value"].Value
-		// TODO: add time
-
-		m.logger.Infof("+ Finding: %s has %s (%s)", patient, finding, value)
-		m.findingsChan <- &Finding{
-			Name:    finding,
-			Patient: patient,
-			Value:   value,
-		}
+	for _, finding := range findings {
+		m.logger.Infof("+ Finding: %s has %s (%s)", finding.Patient, finding.Name, finding.Value)
+		m.findingsChan <- &finding
 	}
 
 	return nil
