@@ -19,6 +19,8 @@ type Manager struct {
 
 	sensors map[string]string // home assistant entity -> ontology sensor name
 
+	findingsChan chan *Finding
+
 	observationID int
 	obsLock       sync.Mutex
 }
@@ -30,6 +32,7 @@ func NewManager(hass *homeassistant.Client, sparql *fuseki.Client, logger *logru
 		sparql:        sparql,
 		logger:        logger,
 		sensors:       map[string]string{},
+		findingsChan:  make(chan *Finding),
 		observationID: 0,
 	}
 }
@@ -74,6 +77,9 @@ func (m *Manager) Run() error {
 	if err != nil {
 		return fmt.Errorf("failed to listen to Home Assistant events: %w", err)
 	}
+
+	server := NewServer(m.logger, m.findingsChan)
+	go server.Run()
 
 	// Handle Home Assistant events
 	for {
@@ -183,7 +189,11 @@ WHERE {
 		value := binding["value"].Value
 
 		m.logger.Infof("+ Finding: %s has %s (%s)", patient, finding, value)
-		// TODO: run action/alarm
+		m.findingsChan <- &Finding{
+			Name:    finding,
+			Patient: patient,
+			Value:   value,
+		}
 	}
 
 	return nil
