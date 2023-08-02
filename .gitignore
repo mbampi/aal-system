@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,go,macos,git
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,go,macos,git
 
+.VSCodeCounter
+.vscode
+
 # Snomed CT is too large to be stored in Git
 snomedct.ttl
 

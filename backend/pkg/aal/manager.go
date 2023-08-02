@@ -187,6 +187,7 @@ WHERE {
 
 		patient := binding["patientName"].Value
 		value := binding["value"].Value
+		// TODO: add time
 
 		m.logger.Infof("+ Finding: %s has %s (%s)", patient, finding, value)
 		m.findingsChan <- &Finding{
