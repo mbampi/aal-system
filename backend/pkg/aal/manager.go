@@ -5,7 +5,6 @@ import (
 	"aalsystem/pkg/homeassistant"
 	"fmt"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -20,32 +19,17 @@ type Manager struct {
 	sensors map[string]string // home assistant entity -> ontology sensor name
 
 	findingsChan chan *Finding
-
-	observationID int
-	obsLock       sync.Mutex
 }
 
 // NewManager creates a new AAL system manager.
 func NewManager(hass *homeassistant.Client, sparql *fuseki.Client, logger *logrus.Logger) *Manager {
 	return &Manager{
-		hass:          hass,
-		sparql:        sparql,
-		logger:        logger,
-		sensors:       map[string]string{},
-		findingsChan:  make(chan *Finding),
-		observationID: 0,
+		hass:         hass,
+		sparql:       sparql,
+		logger:       logger,
+		sensors:      map[string]string{},
+		findingsChan: make(chan *Finding),
 	}
-}
-
-// ObsID returns a new observation ID.
-// It is thread-safe.
-func (m *Manager) ObsID() int {
-	m.obsLock.Lock()
-	id := m.observationID
-	m.observationID += 1
-	m.obsLock.Unlock()
-
-	return id
 }
 
 // AddSensor adds a new sensor to the AAL system.
@@ -65,6 +49,9 @@ func (m *Manager) Run() error {
 		return fmt.Errorf("failed to inititalize Home Assistant websocket connection: %w", err)
 	}
 
+	server := NewServer(m.logger, m.findingsChan)
+	go server.Run()
+
 	// Load initial state of all sensors via REST
 	err = m.loadInitialStates()
 	if err != nil {
@@ -77,9 +64,6 @@ func (m *Manager) Run() error {
 	if err != nil {
 		return fmt.Errorf("failed to listen to Home Assistant events: %w", err)
 	}
-
-	server := NewServer(m.logger, m.findingsChan)
-	go server.Run()
 
 	// Handle Home Assistant events
 	for {
@@ -112,26 +96,25 @@ func (m *Manager) loadInitialStates() error {
 
 // handleStateChangeEvent handles a state change event from Home Assistant.
 func (m *Manager) handleStateChangeEvent(event *homeassistant.Event) error {
-	sensorID, ok := m.sensors[event.EntityID]
+	sensor, ok := m.sensors[event.EntityID]
 	if !ok {
 		m.logger.Debugf("Sensor %s not found", event.EntityID)
 		return nil
 	}
 	obs := Observation{
-		ID:        fmt.Sprintf("%d", m.ObsID()),
-		SensorID:  sensorID,
+		Sensor:    sensor,
 		Value:     event.State,
 		Timestamp: time.Now(),
 	}
 
 	// Insert observation into ontology
-	m.logger.Debugf("Inserting observation: %s (%s)", obs.SensorID, obs.Value)
+	m.logger.Debugf("Inserting observation: %s (%s)", obs.Sensor, obs.Value)
 	startTime := time.Now()
 	err := m.insertObservation(&obs)
 	if err != nil {
 		return fmt.Errorf("failed to insert observation: %w", err)
 	}
-	m.logger.Infof("Inserted observation: sensor=%s value=%s (%s)", obs.SensorID, obs.Value, time.Since(startTime))
+	m.logger.Infof("Inserted observation: sensor=%s value=%s (%s)", obs.Sensor, obs.Value, time.Since(startTime))
 
 	// Check finding
 	m.logger.Trace("Checking findings activated by rules")
@@ -139,7 +122,6 @@ func (m *Manager) handleStateChangeEvent(event *homeassistant.Event) error {
 	if err != nil {
 		return fmt.Errorf("failed to check findings: %w", err)
 	}
-	m.logger.Trace("Checked fidings activated by rules")
 	return nil
 }
 

@@ -34,7 +34,7 @@ func (s *Server) Run() error {
 
 // findingsHandler handles the findings websocket connection.
 func (s *Server) findingsHandler(w http.ResponseWriter, r *http.Request) {
-	s.logger.Debug("Handling findings websocket connection")
+	s.logger.Info("New websocket client connected: ", r.RemoteAddr)
 
 	// Upgrade HTTP connection to websocket connection
 	conn, err := s.upgrader.Upgrade(w, r, nil)
