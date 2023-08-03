@@ -22,7 +22,7 @@ Enabling SPARQL queries to be smartly performed with the reasoning engine, provi
 - [X] Add observation to Fuseki via SPARQL Query when state changes
 - [X] Query triggers activated by the SWRL rules reasoning
 - [ ] Insert SWRL rules in Fuseki via REST API
-- [ ] Serve REST API to allow client connection
+- [X] Serve API to allow client connection
 
 Future Work:
 - [ ] Load phyisical environment from config file
