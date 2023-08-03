@@ -5,28 +5,42 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix ssn: <http://www.w3.org/ns/ssn/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @base <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/> .
 
 <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite> rdf:type owl:Ontology ;
-                                                                                owl:imports <http://www.w3.org/ns/sosa/> ,
-                                                                                            <http://www.w3.org/ns/ssn/> .
+                                                                                owl:imports sosa: ,
+                                                                                           ssn: .
 
 #################################################################
 #    Object Properties
 #################################################################
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#hasMedicalCondition
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/hasEnvironemnt
+:hasEnvironemnt rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf owl:topObjectProperty ;
+                rdfs:range :Room .
+
+
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/hasMedicalCondition
 :hasMedicalCondition rdf:type owl:ObjectProperty ;
                      rdfs:subPropertyOf owl:topObjectProperty ;
                      rdfs:range :Disease .
 
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#madeObservation
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/hasSystem
+:hasSystem rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf owl:topObjectProperty ;
+           rdfs:range sosa:System .
+
+
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/madeObservation
 :madeObservation rdf:type owl:ObjectProperty ;
                  rdfs:subPropertyOf owl:topObjectProperty .
 
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#wears
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/wears
 :wears rdf:type owl:ObjectProperty ;
        rdfs:subPropertyOf owl:topObjectProperty .
 
@@ -35,82 +49,110 @@
 #    Classes
 #################################################################
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#Allergy
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/Allergy
 :Allergy rdf:type owl:Class ;
          rdfs:subClassOf :ClinicalFinding .
 
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#Building
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/Bradycardia
+:Bradycardia rdf:type owl:Class ;
+             rdfs:subClassOf :ClinicalFinding .
+
+
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/Building
 :Building rdf:type owl:Class .
 
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#Caregiver
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/Caregiver
 :Caregiver rdf:type owl:Class ;
            rdfs:subClassOf :Person .
 
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#ClinicalFinding
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/ClinicalFinding
 :ClinicalFinding rdf:type owl:Class .
 
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#Diabetes
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/Diabetes
 :Diabetes rdf:type owl:Class ;
           rdfs:subClassOf :Disease .
 
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#Disease
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/Disease
 :Disease rdf:type owl:Class ;
          rdfs:subClassOf :ClinicalFinding .
 
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#Doctor
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/Doctor
 :Doctor rdf:type owl:Class ;
         rdfs:subClassOf :Person .
 
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#HeartRate
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/HeartRate
 :HeartRate rdf:type owl:Class ;
            rdfs:subClassOf :ObservervableEntity .
 
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#MedicinalProduct
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/MedicinalProduct
 :MedicinalProduct rdf:type owl:Class .
 
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#ObservervableEntity
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/ObservervableEntity
 :ObservervableEntity rdf:type owl:Class ;
                      rdfs:subClassOf :ClinicalFinding .
 
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#Patient
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/Patient
 :Patient rdf:type owl:Class ;
          rdfs:subClassOf :Person .
 
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#Person
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/Person
 :Person rdf:type owl:Class .
 
-###  http://xmlns.com/foaf/0.1/Agent
-<http://xmlns.com/foaf/0.1/Agent> rdfs:subClassOf :Person .
+
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/Room
+:Room rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/Tachycardia
+:Tachycardia rdf:type owl:Class ;
+             rdfs:subClassOf :ClinicalFinding .
+
+
+###  http://www.w3.org/ns/sosa/System
+sosa:System rdf:type owl:Class .
 
 
 #################################################################
 #    Individuals
 #################################################################
 
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#Matheus
-:patient1 rdf:type  owl:NamedIndividual, :Patient ;
-         :hasMedicalCondition :Diabetes ;
-         :wears :emfit_heartrate ;
-         <http://xmlns.com/foaf/0.1/name> "Lorenzo Alfredo" .
-
-
-###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite#emfit_heartrate
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/emfit_heartrate
 :emfit_heartrate rdf:type owl:NamedIndividual ,
-                <http://www.w3.org/ns/sosa/Sensor> ;
-       :madeObservation :matheus_heartrate_obs ;
-       <http://www.w3.org/ns/sosa/observes> :HeartRate ;
-       <http://www.w3.org/ns/sosa/madeObservation> :matheus_heartrate_obs .
+                          sosa:Sensor ;
+                 :madeObservation :matheus_heartrate_obs ;
+                 sosa:madeObservation :matheus_heartrate_obs ;
+                 sosa:observes :HeartRate .
+
+
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/bedroom
+:bedroom rdf:type owl:NamedIndividual ,
+                     :Room ;
+            :hasSystem :emfit_heartrate .
+
+
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/patient1
+:patient1 rdf:type owl:NamedIndividual ,
+                   :Patient ;
+          :hasMedicalCondition :Diabetes ;
+          :wears :emfit_heartrate ;
+          foaf:name "Lorenzo Alfredo" .
+
+
+###  http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/patient1House
+:patient1House rdf:type owl:NamedIndividual ,
+                        :Building ;
+                :hasEnvironemnt :bedroom .
 
 
 ###  Generated by the OWL API (version 4.5.25.2023-02-15T19:15:49Z) https://github.com/owlcs/owlapi
