@@ -3,7 +3,8 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix sosa: <http://www.w3.org/ns/sosa/> .
-@prefix : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/> .
+@prefix sct: <http://snomed.info/id/> .
+@prefix : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#> .
 
 # ---------------------------------------------
 #               General Rules
@@ -40,60 +41,71 @@
 #               Medical Rules
 # ---------------------------------------------
 
-# if the heart rate is above 80 trigger a heartrate event
+# if the heart rate is above 75 trigger a heartrate event
 # associate the event with the observation that triggered it
+# HeartRate = 364075005
+# Tachycardia = 3424008
+# Patient = 116154003
 [TachycardiaRule:
     (?o rdf:type sosa:Observation) 
-    (?o sosa:observes :HeartRate) 
+    (?o sosa:observes sct:364075005)  
     (?o sosa:hasSimpleResult ?r) 
-    greaterThan(?r, 80)
-    (?patient rdf:type :Patient)
+    greaterThan(?r, 75)
+    (?patient rdf:type sct:116154003)
     -> 
-    (?patient :hasFinding :Tachycardia)
-    (?o :inferred :Tachycardia)
+    (?patient :hasFinding sct:3424008)
+    (?o :inferred sct:3424008)
 ]
 
 # if the heart rate is below 75 trigger a heartrate event
 # associate the event with the observation that triggered it
+# HeartRate = 364075005
+# Bradycardia = 48867003
 [BradycardiaRule:
     (?o rdf:type sosa:Observation) 
-    (?o sosa:observes :HeartRate) 
+    (?o sosa:observe sct:364075005)
     (?o sosa:hasSimpleResult ?r) 
     lessThan(?r, 75)
-    (?patient rdf:type :Patient)
+    (?patient rdf:type sct:116154003)
     -> 
-    (?patient :hasFinding :Bradycardia)
-    (?o :inferred :Bradycardia)
+    (?patient :hasFinding sct:48867003) 
+    (?o :inferred sct:48867003)
 ]
 
 # if the patient has diabetes and the blood glucose is above 200 trigger a hyperglycemia finding
 # associate the finding with the observation that triggered it
+# Diabetes = 73211009
+# Blood Glucose Level = 365812005
+# Hyperglycemia = 80394007
 [HyperglycemiaRule:
-    (?patient rdf:type :Patient)
-    (?patient :hasMedicalCondition :Diabetes)
+    (?patient rdf:type sct:116154003)
+    (?patient :hasMedicalCondition sct:73211009) 
     (?patient :wears ?s)
     (?o rdf:type sosa:Observation)
     (?o sosa:madeBySensor ?s)
-    (?o sosa:observes :BloodGlucose)
+    (?o sosa:observes :365812005) 
     (?o sosa:hasSimpleResult ?r)
     greaterThan(?r, 200)
     -> 
-    (?patient :hasFinding :Hyperglycemia)
-    (?o :inferred :Hyperglycemia)
+    (?patient :hasFinding sct:80394007) 
+    (?o :inferred sct:80394007)
 ]
 
 # if the patient has diabetes and the blood glucose is below 70 trigger a hypoglycemia finding
 # associate the finding with the observation that triggered it
+# Diabetes = 73211009
+# Blood Glucose Level = 365812005
+# Hypoglycemia = 302866003
 [HypoglycemiaRule:
-    (?patient rdf:type :Patient)
-    (?patient :hasMedicalCondition :Diabetes)
+    (?patient rdf:type sct:116154003)
+    (?patient :hasMedicalCondition sct:73211009) 
     (?patient :wears ?s)
     (?o rdf:type sosa:Observation)
     (?o sosa:madeBySensor ?s)
-    (?o sosa:observes :BloodGlucose)
+    (?o sosa:observes sct:365812005) 
     (?o sosa:hasSimpleResult ?r)
     lessThan(?r, 70)
     -> 
-    (?patient :hasFinding :Hypoglycemia)
-    (?o :inferred :Hypoglycemia)
+    (?patient :hasFinding sct:302866003) 
+    (?o :inferred sct:302866003)
 ]

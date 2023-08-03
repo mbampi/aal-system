@@ -28,7 +28,7 @@ type Actuator struct {
 
 func (s *Sensor) InsertQuery() Query {
 	sensorID := "sensor_" + s.ID
-	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
+	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
 	INSERT DATA {
 		:` + sensorID + ` rdf:type :Sensor .
 		:` + sensorID + ` :hasName "` + s.Name + `" .
@@ -40,7 +40,7 @@ func (s *Sensor) InsertQuery() Query {
 
 func (s *Sensor) RemoveQuery() Query {
 	sensorID := "sensor_" + s.ID
-	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
+	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
 	DELETE {
 		:` + sensorID + ` ?p ?o .
 	}

@@ -19,7 +19,7 @@ func (o *Observation) InsertQuery() Query {
 	builder.WriteString(`PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>` + "\n")
 	builder.WriteString(`PREFIX sosa: <http://www.w3.org/ns/sosa/>` + "\n")
 	builder.WriteString(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>` + "\n")
-	builder.WriteString(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>` + "\n")
+	builder.WriteString(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>` + "\n")
 
 	builder.WriteString("DELETE {" + "\n")
 	builder.WriteString(`	:` + obsID + ` rdf:type sosa:Observation .` + "\n")

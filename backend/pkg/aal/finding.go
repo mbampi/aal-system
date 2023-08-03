@@ -19,13 +19,15 @@ func findingsQuery() string {
 PREFIX sosa: <http://www.w3.org/ns/sosa/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
 
-SELECT ?patientName ?finding ?value
+SELECT ?patientName ?findingName ?value
 WHERE {
   ?patient :hasFinding ?finding .
-  ?patient foaf:name ?patientName .
+  ?patient :hasName ?patientName .
   ?finding :inferredBy ?observation .
+  ?finding skos:prefLabel ?findingName .
   ?obs sosa:hasSimpleResult ?value .
 }`
 	return query
@@ -39,7 +41,7 @@ func resultToFindings(results fuseki.QueryResult) []Finding {
 
 	findings := make([]Finding, 0, len(bindings))
 	for _, binding := range results.Results.Bindings {
-		finding := binding["finding"].Value
+		finding := binding["findingName"].Value
 		finding = finding[strings.LastIndex(finding, "/")+1:]
 
 		patient := binding["patientName"].Value

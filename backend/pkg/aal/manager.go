@@ -143,7 +143,7 @@ func (m *Manager) checkFindings() error {
 		return err
 	}
 
-	m.logger.Debugf("Got %d findings: %v", len(*&res.Results.Bindings), res)
+	m.logger.Debugf("Got %d findings: %v", len(res.Results.Bindings), res)
 	findings := resultToFindings(*res)
 	if len(findings) == 0 {
 		m.logger.Debugf("No findings found")

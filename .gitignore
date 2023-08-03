@@ -4,8 +4,9 @@
 .VSCodeCounter
 .vscode
 
-# Snomed CT is too large to be stored in Git
+# These ontologies are too large to be stored in Git (around 700MB each)
 snomedct.ttl
+aal-ontology.ttl
 
 ### Git ###
 # Created by git for backups. To disable backups in Git:

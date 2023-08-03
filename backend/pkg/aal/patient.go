@@ -40,7 +40,7 @@ func NewPatientFromFile(id, filename string) (*Patient, error) {
 }
 
 func (p *Patient) InsertQuery() Query {
-	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
+	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
 	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 	INSERT DATA {
@@ -52,7 +52,7 @@ func (p *Patient) InsertQuery() Query {
 }
 
 func (p *Patient) RemoveQuery() Query {
-	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
+	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
 	DELETE {
 		:patient_` + p.ID + ` ?p ?o .
 	}
@@ -62,28 +62,28 @@ func (p *Patient) RemoveQuery() Query {
 }
 
 func (p *Patient) WearsSensor(sensorID string) Query {
-	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
+	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
 	INSERT DATA {
 		:patient_` + p.ID + ` :wears :sensor_` + sensorID + ` .
 	}`)
 }
 
 func (p *Patient) HasDisease(disease URI) Query {
-	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
+	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
 	INSERT DATA {
 		:patient_` + p.ID + ` :hasDisease :disease_` + string(disease) + ` .
 	}`)
 }
 
 func (p *Patient) HasPropensityToAdverseReaction(reaction URI) Query {
-	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
+	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
 	INSERT DATA {
 		:patient_` + p.ID + ` :hasPropensityToAdverseReaction :reaction_` + string(reaction) + ` .
 	}`)
 }
 
 func (p *Patient) TakesMedication(medication URI) Query {
-	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
+	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
 	INSERT DATA {
 		:patient_` + p.ID + ` :takesMedication :medication_` + string(medication) + ` .
 	}`)

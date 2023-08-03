@@ -6,7 +6,7 @@ package aal
 func PatientDiseases(patientID string) Query {
 	return Query(`PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-	PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
+	PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
 	
 	SELECT ?medicalCondition
 	WHERE {
@@ -24,7 +24,7 @@ func ValueByPropertyQuery(patientID, property string) Query {
 	PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 	PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-	PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
+	PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
 
 	SELECT ?value
 	WHERE {
@@ -45,7 +45,7 @@ func PatientObservationsQuery(patientID string) Query {
 	PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 	PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-	PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
+	PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
 	
 	SELECT ?patient ?prop ?value
 	WHERE {
@@ -67,7 +67,7 @@ func ValuesInPatientRoomQuery(patientID string) Query {
 	PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 	PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-	PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/6/aal-ontology-lite/>
+	PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
 
 	SELECT ?room ?sensor ?prop ?value
 	WHERE {
