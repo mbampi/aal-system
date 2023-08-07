@@ -7,7 +7,11 @@ Ontology-Based Health Monitoring System For Ambient Assisted Living
 The goal of this system is to be a semantic connector between Smart Home IoT data and a Health ontology.
 Enabling SPARQL queries to be smartly performed with the reasoning engine, providing information for a better AAL management.
 
+### System Architecture
 ![system architecture](sys-architecture.png "System Architecture")
+
+### Web UI
+![web ui](web-ui.png "Web UI")
 
 ## System capabilities:
 
@@ -23,6 +27,7 @@ Enabling SPARQL queries to be smartly performed with the reasoning engine, provi
 - [X] Query triggers activated by the SWRL rules reasoning
 - [ ] Insert SWRL rules in Fuseki via REST API
 - [X] Serve API to allow client connection
+- [X] Web UI to display the data
 
 Future Work:
 - [ ] Load phyisical environment from config file
