@@ -42,14 +42,21 @@ func (m *Manager) AddSensor(entityID, sensorID string) {
 func (m *Manager) Run() error {
 	m.logger.Info("Starting AAL System")
 
+	server := NewServer(m.logger, m.findingsChan)
+	go server.Run()
+
 	// Initialize Home Assistant websocket connection
 	err := m.hass.InitWebsocket()
 	if err != nil {
 		return fmt.Errorf("failed to inititalize Home Assistant websocket connection: %w", err)
 	}
 
-	server := NewServer(m.logger, m.findingsChan)
-	go server.Run()
+	// Listen to Home Assistant events via websocket
+	events, err := m.hass.ListenEvents()
+	if err != nil {
+		return fmt.Errorf("failed to listen to Home Assistant events: %w", err)
+	}
+	m.logger.Info("Listening to Home Assistant events")
 
 	// Load initial state of all sensors via REST
 	err = m.loadInitialStates()
@@ -58,20 +65,18 @@ func (m *Manager) Run() error {
 	}
 	m.logger.Info("Got initial state of all sensors")
 
-	// Listen to Home Assistant events via websocket
-	events, err := m.hass.ListenEvents()
-	if err != nil {
-		return fmt.Errorf("failed to listen to Home Assistant events: %w", err)
-	}
-
 	// Handle Home Assistant events
+	m.logger.Debug("Waiting new Home Assistant events")
 	for {
 		event, ok := <-events
 		if !ok {
 			return fmt.Errorf("home Assistant events channel closed")
 		}
 		m.logger.Debugf("- Got event: %s", event.ShortString())
-		m.handleStateChangeEvent(&event)
+		err := m.handleStateChangeEvent(&event)
+		if err != nil {
+			m.logger.Errorf("failed to handle state change event: %s", err.Error())
+		}
 	}
 }
 
@@ -117,10 +122,12 @@ func (m *Manager) handleStateChangeEvent(event *homeassistant.Event) error {
 
 	// Check finding
 	m.logger.Trace("Checking findings activated by rules")
-	err = m.checkFindings()
-	if err != nil {
-		return fmt.Errorf("failed to check findings: %w", err)
-	}
+	go func() {
+		err = m.checkFindings()
+		if err != nil {
+			m.logger.Errorf("failed to check findings: %s", err.Error())
+		}
+	}()
 	return nil
 }
 
