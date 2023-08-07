@@ -13,7 +13,7 @@ import (
 func main() {
 	// Logger
 	logger := logrus.New()
-	logger.SetLevel(logrus.InfoLevel)
+	logger.SetLevel(logrus.DebugLevel)
 	logger.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp: true,
 	})

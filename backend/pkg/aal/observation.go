@@ -7,9 +7,10 @@ import (
 )
 
 type Observation struct {
-	Sensor    string
-	Value     string
-	Timestamp time.Time
+	Name      string    `json:"name"`
+	Sensor    string    `json:"sensor"`
+	Value     string    `json:"value"`
+	Timestamp time.Time `json:"timestamp"`
 }
 
 func (o *Observation) InsertQuery() Query {

@@ -17,17 +17,19 @@ type Manager struct {
 
 	sensors map[string]string // home assistant entity -> ontology sensor name
 
-	findingsChan chan *Finding
+	findingsChan    chan *Finding
+	observationChan chan *Observation
 }
 
 // NewManager creates a new AAL system manager.
 func NewManager(hass *homeassistant.Client, sparql *fuseki.Client, logger *logrus.Logger) *Manager {
 	return &Manager{
-		hass:         hass,
-		sparql:       sparql,
-		logger:       logger,
-		sensors:      map[string]string{},
-		findingsChan: make(chan *Finding),
+		hass:            hass,
+		sparql:          sparql,
+		logger:          logger,
+		sensors:         map[string]string{},
+		findingsChan:    make(chan *Finding),
+		observationChan: make(chan *Observation),
 	}
 }
 
@@ -42,7 +44,7 @@ func (m *Manager) AddSensor(entityID, sensorID string) {
 func (m *Manager) Run() error {
 	m.logger.Info("Starting AAL System")
 
-	server := NewServer(m.logger, m.findingsChan)
+	server := NewServer(m.logger, m.findingsChan, m.observationChan)
 	go server.Run()
 
 	// Initialize Home Assistant websocket connection
@@ -106,10 +108,12 @@ func (m *Manager) handleStateChangeEvent(event *homeassistant.Event) error {
 		return nil
 	}
 	obs := Observation{
+		Name:      "Heart Rate", // TODO: get name from ontology
 		Sensor:    sensor,
 		Value:     event.State,
 		Timestamp: time.Now(),
 	}
+	m.observationChan <- &obs
 
 	// Insert observation into ontology
 	m.logger.Debugf("Inserting observation: %s (%s)", obs.Sensor, obs.Value)
