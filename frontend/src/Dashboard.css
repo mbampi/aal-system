@@ -1,0 +1,56 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: #f2f2f2;
+}
+
+div.event-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+        "name value"
+        "patientLabel patientValue"
+        "sensorLabel sensorValue"
+        ". timestamp";
+    border: 1px solid #4a4a4a;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    background-color: #333;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+p {
+    margin: 5px;
+}
+
+p.name {
+    grid-area: name;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #f2f2f2;
+}
+
+p.label {
+    font-size: 0.7em;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+p.value {
+    grid-area: value;
+    font-size: 1.3em;
+    font-weight: bold;
+    text-align: right;
+    color: #f39c12;
+}
+
+p.timestamp {
+    grid-area: timestamp;
+    font-size: 0.8em;
+    color: #7f8c8d;
+    text-align: right;
+    align-self: end;
+}
