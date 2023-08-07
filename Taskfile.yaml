@@ -16,6 +16,13 @@ tasks:
       - bash -c "while ! curl -s http://localhost:3030/$/ping; do sleep 1; done"
       - cd backend && go run main.go
   
+  dev:
+    description: "Starts the fuseki container and waits for it to be ready to run the aal service"
+    cmds:
+      - docker run -d -p 3030:3030 --name fuseki-server fuseki 
+      - bash -c "while ! curl -s http://localhost:3030/$/ping; do sleep 1; done"
+      - cd backend && air
+  
   down:
     description: "Stops and removes the fuseki container"
     cmds:
@@ -28,3 +35,16 @@ tasks:
       - task down
       - task build
       - task up
+  
+  update-dev:
+    description: "Update the fuseki image"
+    cmds:
+      - task down
+      - task build
+      - task dev
+
+  front:
+    description: "Starts the frontend"
+    cmds:
+      - cd frontend && npm start
+  
