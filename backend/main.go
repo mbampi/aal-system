@@ -14,6 +14,9 @@ func main() {
 	// Logger
 	logger := logrus.New()
 	logger.SetLevel(logrus.InfoLevel)
+	logger.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp: true,
+	})
 	logger.Info("Starting AAL System")
 
 	// Environment variables
@@ -26,6 +29,7 @@ func main() {
 	// Home Assistant
 	logger.Debug("Connecting to Home Assistant")
 	hass := homeassistant.NewClient()
+	hass.SetLogger(logger)
 	hass.SetLongLivedAccessToken(accessToken)
 	if !hass.IsConnected() {
 		logger.Warnf("Is your HomeAssistant also connected to network \"%s\" ?", utils.GetWIFIName())

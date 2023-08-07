@@ -3,7 +3,6 @@ package homeassistant
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"time"
@@ -95,7 +94,7 @@ func (c *Client) ListenEvents() (<-chan Event, error) {
 			var event wsEvent
 			err := c.wsConn.ReadJSON(&event)
 			if err != nil {
-				log.Printf("error reading event: %s", err)
+				c.logger.Debugf("error reading event: %s", err)
 				return
 			}
 			events <- wsEventToEvent(event)

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 )
 
 // Client is a Home Assistant client.
@@ -15,6 +16,7 @@ type Client struct {
 	longLivedAccessToken string
 	httpClient           *http.Client
 	wsConn               *websocket.Conn
+	logger               *logrus.Logger
 }
 
 // NewClient creates a new Home Assistant client.
@@ -46,6 +48,11 @@ func (c *Client) SetLongLivedAccessToken(longLivedAccessToken string) {
 // SetTimeout sets the timeout for the HTTP client.
 func (c *Client) SetTimeout(timeout time.Duration) {
 	c.httpClient.Timeout = timeout
+}
+
+// SetLogger sets the logger for the HTTP client.
+func (c *Client) SetLogger(logger *logrus.Logger) {
+	c.logger = logger
 }
 
 // getHeaders returns the headers for the HTTP client,
@@ -113,6 +120,7 @@ func (c *Client) InitWebsocket() error {
 	if result.Type != "auth_ok" {
 		return fmt.Errorf("error authenticating websocket: %v", result)
 	}
+	c.logger.Debugf("Authenticated websocket connection")
 
 	return nil
 }
