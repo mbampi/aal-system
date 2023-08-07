@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
     background-color: #1a1a1a;
     color: #f2f2f2;
 }
@@ -19,6 +19,14 @@ div.event-card {
     margin: 10px;
     background-color: #333;
     box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+div.event-card:hover {
+    box-shadow: -3px 5px 6px rgba(255, 189, 83, 0.5);
+}
+
+div.card-field {
+    margin: 5px;
 }
 
 p {
