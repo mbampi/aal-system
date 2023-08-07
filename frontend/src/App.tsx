@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import Events from './Events';
+import Events from './Findings';
 import Charts from './Charts';
 import './App.css';
-import EventData from './EventData';
-
-
+import { TFinding, TObservation, TPackage } from './Types';
 
 function App() {
-  const [events, setEvents] = useState<EventData[]>([]);
+  const [findings, setFindings] = useState<TFinding[]>([]);
+  const [observations, setObservations] = useState<TObservation[]>([]);
   let running = false;
 
   useEffect(() => {
@@ -20,9 +19,18 @@ function App() {
 
       ws.onmessage = (event) => {
         try {
-          console.log("Received event: ", event.data);
-          const eventData = JSON.parse(event.data) as EventData;
-          setEvents((prevEvents) => [...prevEvents, eventData]);
+          console.log("Received package: ", event.data);
+          const pkg = JSON.parse(event.data) as TPackage;
+          if (pkg.type === "finding") {
+            let finding = pkg.data as TFinding;
+            setFindings((prevEvents) => [...prevEvents, finding]);
+          }
+          else if (pkg.type === "observation") {
+            let finding = pkg.data as TObservation;
+            setObservations((prevEvents) => [...prevEvents, pkg.data]);
+          }
+          else
+            console.error("Unknown package type: ", pkg.type);
         } catch (error) {
           console.error("Error parsing event data:", error);
         }
@@ -49,10 +57,10 @@ function App() {
   return (
     <div className="App">
       <div className="events-container">
-        <Events events={events} />
+        <Events findings={findings} />
       </div>
       <div className="charts-container">
-        <Charts data={events} />
+        <Charts observations={observations} />
       </div>
     </div>
   );

@@ -1,0 +1,32 @@
+body {
+    font-family: "Roboto", sans-serif;
+    background-color: #1a1a1a;
+    color: #f2f2f2;
+}
+
+table.observations-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #4a4a4a;
+    border-radius: 10px;
+    margin: 10px;
+    background-color: #333;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+table.observations-table th,
+table.observations-table td {
+    padding: 15px;
+    color: #aaa;
+    font-size: 0.9em;
+    text-align: left;
+}
+
+table.observations-table th {
+    background-color: #4a4a4a;
+    color: #f2f2f2;
+}
+
+table.observations-table tr:nth-child(even) {
+    background-color: #2b2b2b;
+}

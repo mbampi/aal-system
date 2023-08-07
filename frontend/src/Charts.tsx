@@ -1,21 +1,22 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-import EventData from './EventData';
+import { TObservation } from './Types';
+import './Charts.css';
 
 interface ChartsProps {
-    data: EventData[];
+    observations: TObservation[];
 }
 
-const Charts: React.FC<ChartsProps> = ({ data }) => {
+const Charts: React.FC<ChartsProps> = ({ observations }) => {
     // Convert the data to the format needed by recharts
-    const chartData = data.map(event => ({
-        timestamp: new Date(event.timestamp).toLocaleTimeString(),
-        value: parseFloat(event.value)
+    const chartData = observations.map((obs: TObservation) => ({
+        timestamp: new Date(obs.timestamp).toLocaleTimeString(),
+        value: parseFloat(obs.value)
     }));
 
     return (
         <div>
-            <h2>Charts</h2>
+            <h2>Observations</h2>
 
             <h4>Heart Rate</h4>
 
@@ -31,6 +32,26 @@ const Charts: React.FC<ChartsProps> = ({ data }) => {
                 <Tooltip />
                 <Line type="monotone" dataKey="value" stroke="#82ca9d" />
             </LineChart>
+
+            {/* List with all obvervations */}
+            <table className="observations-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {observations.map((obs: TObservation, index: number) => (
+                        <tr key={index}>
+                            <td>{new Date(obs.timestamp).toLocaleDateString()}</td>
+                            <td>{new Date(obs.timestamp).toLocaleTimeString()}</td>
+                            <td>{obs.value}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 }
