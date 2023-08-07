@@ -2,6 +2,7 @@ package aal
 
 import (
 	"aalsystem/pkg/fuseki"
+	"log"
 	"strings"
 	"time"
 )
@@ -22,13 +23,15 @@ PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
 
-SELECT ?patientName ?findingName ?value
+SELECT ?patientName ?sensor ?findingName ?value ?time
 WHERE {
-  ?patient :hasFinding ?finding .
-  ?patient :hasName ?patientName .
-  ?finding :inferredBy ?observation .
-  ?finding skos:prefLabel ?findingName .
-  ?obs sosa:hasSimpleResult ?value .
+	?patient :hasFinding ?finding .
+	?patient :hasName ?patientName .
+	?finding :inferredBy ?observation .
+	?finding skos:prefLabel ?findingName .
+	?observation sosa:hasSimpleResult ?value .
+	?observation sosa:madeBySensor ?sensor .
+	?observation sosa:resultTime ?time 
 }`
 	return query
 }
@@ -46,12 +49,22 @@ func resultToFindings(results fuseki.QueryResult) []Finding {
 
 		patient := binding["patientName"].Value
 		value := binding["value"].Value
-		// TODO: add time
+
+		sensor := binding["sensor"].Value
+		sensor = sensor[strings.LastIndex(sensor, "#")+1:]
+
+		layout := "2006-01-02T15:04:05"
+		time, err := time.Parse(layout, binding["time"].Value)
+		if err != nil {
+			log.Println("failed to parse time:", err)
+		}
 
 		findings = append(findings, Finding{
-			Name:    finding,
-			Patient: patient,
-			Value:   value,
+			Name:      finding,
+			Patient:   patient,
+			Value:     value,
+			Sensor:    sensor,
+			Timestamp: time,
 		})
 	}
 

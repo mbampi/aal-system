@@ -50,7 +50,7 @@
     (?o rdf:type sosa:Observation) 
     (?o sosa:observes sct:364075005)  
     (?o sosa:hasSimpleResult ?r) 
-    greaterThan(?r, 75)
+    greaterThan(?r, 80)
     (?patient rdf:type sct:116154003)
     -> 
     (?patient :hasFinding sct:3424008)
@@ -63,7 +63,7 @@
 # Bradycardia = 48867003
 [BradycardiaRule:
     (?o rdf:type sosa:Observation) 
-    (?o sosa:observe sct:364075005)
+    (?o sosa:observes sct:364075005)
     (?o sosa:hasSimpleResult ?r) 
     lessThan(?r, 75)
     (?patient rdf:type sct:116154003)
