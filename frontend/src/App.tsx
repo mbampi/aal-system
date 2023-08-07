@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Events from './Findings';
 import Charts from './Charts';
 import './App.css';
@@ -21,27 +21,31 @@ function App() {
         try {
           console.log("Received package: ", event.data);
           const pkg = JSON.parse(event.data) as TPackage;
-          if (pkg.type === "finding") {
-            let finding = pkg.data as TFinding;
-            setFindings((prevEvents) => [...prevEvents, finding]);
+
+          switch (pkg.type) {
+            case "finding":
+              let finding = pkg.data as TFinding;
+              setFindings((prevEvents) => [...prevEvents, finding]);
+              break;
+            case "observation":
+              let observation = pkg.data as TObservation;
+              setObservations((prevEvents) => [...prevEvents, observation]);
+              break;
+            default:
+              console.error("Unknown package type: ", pkg.type);
           }
-          else if (pkg.type === "observation") {
-            let finding = pkg.data as TObservation;
-            setObservations((prevEvents) => [...prevEvents, pkg.data]);
-          }
-          else
-            console.error("Unknown package type: ", pkg.type);
+
         } catch (error) {
           console.error("Error parsing event data:", error);
         }
       };
 
       ws.onclose = (event) => {
-        console.log("WebSocket is closed now.", event);
+        console.log("WebSocket closed.", event);
       };
 
       ws.onerror = (error) => {
-        console.error("WebSocket encountered error: ", error);
+        console.error("WebSocket error: ", error);
       };
 
       // Close the WebSocket connection when the component unmounts

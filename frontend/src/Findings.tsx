@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "./Findings.css";
 import { TFinding } from "./Types";
 
