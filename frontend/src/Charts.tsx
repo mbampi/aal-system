@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { TObservation } from './Types';
 import './Charts.css';
@@ -8,6 +8,8 @@ interface ChartsProps {
 }
 
 const Charts: React.FC<ChartsProps> = ({ observations }) => {
+    const [expandedProperty, setExpandedProperty] = useState<null | string>(null);
+
     const observationTypes = Array.from(new Set(observations.map((obs: TObservation) => obs.name)));
 
     return (
@@ -19,6 +21,8 @@ const Charts: React.FC<ChartsProps> = ({ observations }) => {
                 return <PropertyObservations
                     property={type}
                     observations={filteredObservations}
+                    expanded={expandedProperty === type}
+                    onToggleExpand={() => setExpandedProperty(type === expandedProperty ? null : type)}
                 />;
             })}
         </div>
@@ -28,37 +32,43 @@ const Charts: React.FC<ChartsProps> = ({ observations }) => {
 interface PropertyObservationsProps {
     property: string;
     observations: TObservation[];
+    expanded: boolean;
+    onToggleExpand: () => void;
 }
 
-const PropertyObservations: React.FC<PropertyObservationsProps> = ({ property, observations }) => {
+const PropertyObservations: React.FC<PropertyObservationsProps> = ({ property, observations, expanded, onToggleExpand }) => {
     const chartData = observations.map((obs: TObservation) => ({
         timestamp: new Date(obs.timestamp).toLocaleTimeString(),
         value: parseFloat(obs.value)
     }));
 
-    return <div key={property} className='property-header'>
+    return <div key={property} className='property-obs' onClick={onToggleExpand}>
+        <h2 >{property}</h2>
+        {expanded && <>
 
-        <h2>{property}</h2>
-        <p>Sensor: {observations[0].sensor} </p>
-        <p>Number of observations: {observations.length}</p>
-        <p>Min value: {Math.min(...observations.map((obs: TObservation) => parseFloat(obs.value)))}</p>
-        <p>Max value: {Math.max(...observations.map((obs: TObservation) => parseFloat(obs.value)))}</p>
+            <div className="info-container">
+                <p><strong>Sensor:</strong> {observations[0].sensor} </p>
+                <p><strong>Number of observations:</strong> {observations.length}</p>
+                <p><strong>Min value:</strong> {Math.min(...observations.map((obs: TObservation) => parseFloat(obs.value)))}</p>
+                <p><strong>Max value:</strong> {Math.max(...observations.map((obs: TObservation) => parseFloat(obs.value)))}</p>
+            </div>
 
-        <LineChart
-            width={700}
-            height={300}
-            data={chartData}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-        >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="timestamp" />
-            <YAxis dataKey="value" />
-            <Tooltip />
-            <Line type="monotone" dataKey="value" stroke="#82ca9d" />
-        </LineChart>
+            <LineChart
+                width={700}
+                height={300}
+                data={chartData}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="timestamp" />
+                <YAxis dataKey="value" />
+                <Tooltip />
+                <Line type="monotone" dataKey="value" stroke="#82ca9d" />
+            </LineChart>
 
-        {/* List with all observations of current type */}
-        <ObservationsTable observations={observations} />
+            {/* List with all observations of current type */}
+            <ObservationsTable observations={observations} />
+        </>}
     </div>
 }
 
