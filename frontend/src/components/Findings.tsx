@@ -1,6 +1,6 @@
 import React from "react";
 import "./Findings.css";
-import { TFinding } from "./Types";
+import { TFinding } from "../Types";
 
 interface FindingsProps {
     findings: TFinding[];

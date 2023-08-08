@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-import { TObservation } from './Types';
+import { TObservation } from '../Types';
 import './Observations.css';
 
 interface ObservationsProps {
