@@ -19,6 +19,7 @@ const Observations: React.FC<ObservationsProps> = ({ observations }) => {
             {observationTypes.map((type) => {
                 const filteredObservations = observations.filter((obs: TObservation) => obs.name === type);
                 return <PropertyObservations
+                    key={type}
                     property={type}
                     observations={filteredObservations}
                     expanded={expandedProperty === type}
