@@ -16,7 +16,8 @@
 
             # Jena rules
             ja:reasonerURL <http://jena.hpl.hp.com/2003/GenericRuleReasoner> ;
-            ja:rulesFrom <file:/fuseki/swrl.rules> ;
+            ja:rulesFrom <file:/fuseki/general.rules> ;
+            ja:rulesFrom <file:/fuseki/medical.rules> ;
         ]
     ] ;
     .

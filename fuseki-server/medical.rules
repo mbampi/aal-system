@@ -9,45 +9,6 @@
 @prefix : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#> .
 
 # ---------------------------------------------
-#               General Rules
-# ---------------------------------------------
-
-# if an observation is made by a sensor that observes a property, then the observation also observes the same property
-[observesInference: 
-    (?o rdf:type sosa:Observation) 
-    (?o sosa:madeBySensor ?s) 
-    (?s sosa:observes ?op) 
-    -> 
-    (?o sosa:observes ?op)
-]
-
-# if an observation is made by a sensor that has a feature of interest, then the observation also has the same feature of interest
-[featureOfInterestInference: 
-    (?o rdf:type sosa:Observation) 
-    (?o sosa:madeBySensor ?s)
-    (?s sosa:hasFeatureOfInterest ?foi) 
-    -> 
-    (?o sosa:hasFeatureOfInterest ?foi)
-]
-
-# if an observation inferred a finding, then the finding was inferred by the observation
-[inferenceInference: 
-    (?o rdf:type sosa:Observation) 
-    (?o :inferred ?f) 
-    -> 
-    (?f :inferredBy ?o)
-]
-
-# if an system is in X and it has a subsystem, then the subsystem is in X
-[locationInference: 
-    (?sys rdf:type ssn:System)
-    (?sys ssn:hasSubSystem ?subsys)
-    (?sys dogont:isIn ?loc)
-    -> 
-    (?subsys dogont:isIn ?loc)
-]
-
-# ---------------------------------------------
 #               Medical Rules
 # ---------------------------------------------
 

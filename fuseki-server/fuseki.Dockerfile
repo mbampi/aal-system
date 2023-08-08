@@ -24,8 +24,9 @@ COPY /fuseki-server/config.ttl /fuseki/config.ttl
 # Copy Openllet reasoner jar files
 COPY /fuseki-server/openllet-jars /fuseki/run/extra
 
-# Copy the rules file
-COPY /fuseki-server/swrl.rules /fuseki/swrl.rules
+# Copy the swrl rules files
+COPY /fuseki-server/general.rules /fuseki/general.rules
+COPY /fuseki-server/medical.rules /fuseki/medical.rules
 
 # Expose port for Fuseki
 EXPOSE 3030
