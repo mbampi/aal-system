@@ -70,3 +70,15 @@ func resultToFindings(results fuseki.QueryResult) []Finding {
 
 	return findings
 }
+
+// IsDuplicate returns true if the finding is already in the list.
+func (f *Finding) IsDuplicate(list []Finding) bool {
+	for _, finding := range list {
+		if f.Name == finding.Name &&
+			f.Patient == finding.Patient &&
+			f.Sensor == finding.Sensor {
+			return true
+		}
+	}
+	return false
+}

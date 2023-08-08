@@ -17,6 +17,7 @@ type Manager struct {
 
 	sensors map[string]Sensor // home assistant entity -> ontology sensor name
 
+	currentFindings []Finding
 	findingsChan    chan *Finding
 	observationChan chan *Observation
 }
@@ -182,10 +183,15 @@ func (m *Manager) checkFindings() error {
 		m.logger.Debugf("No findings found")
 		return nil
 	}
+
 	for _, finding := range findings {
-		m.logger.Infof("+ Finding: %s has %s (%s)", finding.Patient, finding.Name, finding.Value)
+		if finding.IsDuplicate(m.currentFindings) {
+			continue
+		}
+		m.logger.Infof("++ New finding: %s has %s (%s)", finding.Patient, finding.Name, finding.Value)
 		m.findingsChan <- &finding
 	}
+	m.currentFindings = findings
 
 	return nil
 }
