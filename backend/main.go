@@ -48,7 +48,16 @@ func main() {
 
 	// AAL System
 	aalManager := aal.NewManager(hass, sparqlServer, logger)
+
+	// real sensors
+	// aalManager.AddSensor("sensor.emfitqs_000ebc_heart_rate", "emfit_heartrate")
+	// aalManager.AddSensor("sensor.emfitqs_000ebc_respiratory_rate", "emfit_breathrate")
+	// aalManager.AddSensor("binary_sensor.emfitqs_000ebc_bed_presence", "emfit_bedpresence")
+
+	// simulated sensors
+	aalManager.AddSensor("sensor.relative_humidity", "bedroom_humidity")
 	aalManager.AddSensor("sensor.heart_rate", "emfit_heartrate")
+	aalManager.AddSensor("sensor.breath_rate", "emfit_breathrate")
 
 	err := aalManager.Run()
 	if err != nil {

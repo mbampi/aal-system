@@ -15,7 +15,7 @@ type Manager struct {
 	sparql *fuseki.Client
 	logger *logrus.Logger
 
-	sensors map[string]string // home assistant entity -> ontology sensor name
+	sensors map[string]Sensor // home assistant entity -> ontology sensor name
 
 	findingsChan    chan *Finding
 	observationChan chan *Observation
@@ -27,7 +27,7 @@ func NewManager(hass *homeassistant.Client, sparql *fuseki.Client, logger *logru
 		hass:            hass,
 		sparql:          sparql,
 		logger:          logger,
-		sensors:         map[string]string{},
+		sensors:         map[string]Sensor{},
 		findingsChan:    make(chan *Finding),
 		observationChan: make(chan *Observation),
 	}
@@ -36,7 +36,29 @@ func NewManager(hass *homeassistant.Client, sparql *fuseki.Client, logger *logru
 // AddSensor adds a new sensor to the AAL system.
 func (m *Manager) AddSensor(entityID, sensorID string) {
 	m.logger.Debugf("Adding sensor: %s (%s)", sensorID, entityID)
-	m.sensors[entityID] = sensorID
+
+	query := GetSensorQuery(sensorID)
+	res, err := m.sparql.Query(string(query))
+	if err != nil {
+		m.logger.Errorf("error getting sensor: query=%v", query)
+		return
+	}
+	if len(res.Results.Bindings) == 0 {
+		m.logger.Errorf("sensor not found in ontology: %s", sensorID)
+		return
+	}
+
+	m.logger.Debugf("Sensor from ontology: %v", res.Results.Bindings[0])
+
+	sensor := Sensor{
+		ID:                 sensorID,
+		ObservableProperty: res.Results.Bindings[0]["observableProperty"].Value,
+		InstalledAt:        URI(res.Results.Bindings[0]["installedAt"].Value),
+	}
+
+	m.sensors[entityID] = sensor
+
+	m.logger.Debugf("Added sensor: %v", sensor)
 }
 
 // Run starts the AAL system.
@@ -91,7 +113,6 @@ func (m *Manager) loadInitialStates() error {
 	}
 	for _, state := range states {
 		event := homeassistant.EventFromState(state)
-		m.logger.Debugf("- Initial state: %s", event.ShortString())
 		err = m.handleStateChangeEvent(event)
 		if err != nil {
 			return fmt.Errorf("failed to handle initial state: %w", err)
@@ -104,12 +125,12 @@ func (m *Manager) loadInitialStates() error {
 func (m *Manager) handleStateChangeEvent(event *homeassistant.Event) error {
 	sensor, ok := m.sensors[event.EntityID]
 	if !ok {
-		m.logger.Debugf("Sensor %s not found", event.EntityID)
+		m.logger.Tracef("Sensor %s not found", event.EntityID)
 		return nil
 	}
 	obs := Observation{
-		Name:      "Heart Rate", // TODO: get name from ontology
-		Sensor:    sensor,
+		Name:      sensor.ObservableProperty,
+		Sensor:    sensor.ID,
 		Value:     event.State,
 		Timestamp: time.Now(),
 	}
@@ -141,6 +162,7 @@ func (m *Manager) insertObservation(obs *Observation) error {
 
 	err := m.sparql.Update(string(query))
 	if err != nil {
+		m.logger.Errorf("error inserting observation: query=%v", query)
 		return err
 	}
 	return nil
@@ -154,7 +176,7 @@ func (m *Manager) checkFindings() error {
 		return err
 	}
 
-	m.logger.Debugf("Got %d findings: %v", len(res.Results.Bindings), res)
+	m.logger.Tracef("Got %d findings", len(res.Results.Bindings))
 	findings := resultToFindings(*res)
 	if len(findings) == 0 {
 		m.logger.Debugf("No findings found")

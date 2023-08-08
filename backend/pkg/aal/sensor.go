@@ -10,12 +10,10 @@ type System struct {
 type Sensor struct {
 	ID                 string
 	Name               string
-	FeatureOfInterest  URI // Patient, Room, etc
-	ObservableProperty URI // HeartRate, Temperature, etc
-	InstalledAt        URI // Patient, Room, Bed, Window, etc
-
-	ValueField string // Field of the Home Assistant state object that contains the value of the observable property
-	Unit       string // Unit of the observable property
+	FeatureOfInterest  URI    // Patient, Room, etc
+	ObservableProperty string // HeartRate, Temperature, etc
+	InstalledAt        URI    // Patient, Room, Bed, Window, etc
+	Unit               string // Unit of the observable property
 }
 
 type Actuator struct {
@@ -26,25 +24,22 @@ type Actuator struct {
 	LocatedAt          URI // Patient, Room, Bed, Window, etc
 }
 
-func (s *Sensor) InsertQuery() Query {
-	sensorID := "sensor_" + s.ID
+// GetSensorQuery returns the query to look for a specific sensor in the ontology
+// and return its attributes.
+func GetSensorQuery(sensorID string) Query {
 	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
-	INSERT DATA {
-		:` + sensorID + ` rdf:type :Sensor .
-		:` + sensorID + ` :hasName "` + s.Name + `" .
-		:` + sensorID + ` :observes :` + string(s.ObservableProperty) + ` .
-		:` + sensorID + ` :hasFeatureOfInterest :` + string(s.FeatureOfInterest) + ` .
-		:` + sensorID + ` :locatedAt :` + string(s.InstalledAt) + ` .
-	}`)
-}
+	PREFIX sosa: <http://www.w3.org/ns/sosa/>
+	PREFIX dogont: <http://elite.polito.it/ontologies/dogont.owl#>
+	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+	PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-func (s *Sensor) RemoveQuery() Query {
-	sensorID := "sensor_" + s.ID
-	return Query(`PREFIX : <http://www.semanticweb.org/matheusdbampi/ontologies/2023/7/aal-ontology#>
-	DELETE {
-		:` + sensorID + ` ?p ?o .
-	}
+	SELECT ?observableProperty ?installedAt
 	WHERE {
-		:` + sensorID + ` ?p ?o .
+		:` + sensorID + ` rdf:type sosa:Sensor .
+		OPTIONAL { 
+			:` + sensorID + ` sosa:observes ?prop . 
+			?prop skos:prefLabel ?observableProperty .
+		}
+		OPTIONAL { :` + sensorID + ` dogont:isIn ?installedAt . }
 	}`)
 }

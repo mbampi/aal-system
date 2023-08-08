@@ -32,7 +32,13 @@ func (o *Observation) InsertQuery() Query {
 
 	builder.WriteString("INSERT {" + "\n")
 	builder.WriteString(`	:` + obsID + ` rdf:type sosa:Observation .` + "\n")
-	builder.WriteString(`	:` + obsID + ` sosa:hasSimpleResult ` + o.Value + ` .` + "\n")
+	if o.Value == "on" {
+		builder.WriteString(`	:` + obsID + ` sosa:hasSimpleResult "true"^^xsd:boolean .` + "\n")
+	} else if o.Value == "off" {
+		builder.WriteString(`	:` + obsID + ` sosa:hasSimpleResult "false"^^xsd:boolean .` + "\n")
+	} else {
+		builder.WriteString(`	:` + obsID + ` sosa:hasSimpleResult ` + o.Value + ` .` + "\n")
+	}
 	builder.WriteString(`	:` + obsID + ` sosa:madeBySensor :` + o.Sensor + ` .` + "\n")
 	builder.WriteString(`	:` + obsID + ` sosa:resultTime "` + o.Timestamp.Format("2006-01-02T15:04:05") + `"^^xsd:dateTime .` + "\n")
 	builder.WriteString(`   :` + obsID + ` sosa:hasFeatureOfInterest :patient1.` + "\n")
