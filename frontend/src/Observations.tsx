@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { TObservation } from './Types';
-import './Charts.css';
+import './Observations.css';
 
-interface ChartsProps {
+interface ObservationsProps {
     observations: TObservation[];
 }
 
-const Charts: React.FC<ChartsProps> = ({ observations }) => {
+const Observations: React.FC<ObservationsProps> = ({ observations }) => {
     const [expandedProperty, setExpandedProperty] = useState<null | string>(null);
 
     const observationTypes = Array.from(new Set(observations.map((obs: TObservation) => obs.name)));
@@ -72,7 +72,7 @@ const PropertyObservations: React.FC<PropertyObservationsProps> = ({ property, o
     </div>
 }
 
-const ObservationsTable: React.FC<ChartsProps> = ({ observations }) => {
+const ObservationsTable: React.FC<ObservationsProps> = ({ observations }) => {
     return (
         <div>
             <table className='observations-table'>
@@ -97,4 +97,4 @@ const ObservationsTable: React.FC<ChartsProps> = ({ observations }) => {
     );
 }
 
-export default Charts;
+export default Observations;

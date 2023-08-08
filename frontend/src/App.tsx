@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Events from './Findings';
-import Charts from './Charts';
+import Charts from './Observations';
 import './App.css';
 import { TFinding, TObservation, TPackage } from './Types';
 
