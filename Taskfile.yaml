@@ -3,48 +3,34 @@ version: '3'
 tasks:
 
   build:
-    description: "Builds the fuseki image and the go binary"
+    description: "Builds the fuseki, frontend and backend development images"
     cmds:
-      - docker build --progress=plain --tag fuseki --file fuseki-server/fuseki.Dockerfile .
-      - cd backend && go mod tidy
-      - cd backend && go build -v ./...
-
-  up:
-    description: "Starts the fuseki container and waits for it to be ready to run the aal service"
-    cmds:
-      - docker run -d -p 3030:3030 --name fuseki-server fuseki 
-      - bash -c "while ! curl -s http://localhost:3030/$/ping; do sleep 1; done"
-      - cd backend && go run main.go
+      - docker build --progress=plain --tag fuseki --file fuseki-server/dev.Dockerfile .
+      - cd frontend && docker build --progress=plain --tag aal-frontend --file dev.Dockerfile .
+      - cd backend && docker build --progress=plain --tag aal-backend --file dev.Dockerfile --build-arg hassio_token=$HASSIO_TOKEN .
   
-  dev:
-    description: "Starts the fuseki container and waits for it to be ready to run the aal service"
+  up:
+    description: "Starts the fuseki container and waits for it to be ready to run the aal backend and frontend"
     cmds:
       - docker run -d -p 3030:3030 --name fuseki-server fuseki 
       - bash -c "while ! curl -s http://localhost:3030/$/ping; do sleep 1; done"
-      - cd backend && air
+      - docker run -d -e HASSIO_TOKEN=$HASSIO_TOKEN -p 8080:8080 --name aal-backend aal-backend 
+      - docker run -d -p 3000:3000 --name aal-frontend aal-frontend
   
   down:
     description: "Stops and removes the fuseki container"
     cmds:
       - docker stop fuseki-server
       - docker rm fuseki-server
-    
+      - docker stop aal-backend
+      - docker rm aal-backend
+      - docker stop aal-frontend
+      - docker rm aal-frontend
+  
   update:
     description: "Update the fuseki image"
     cmds:
-      - task down
-      - task build
-      - task up
-  
-  update-dev:
-    description: "Update the fuseki image"
-    cmds:
-      - task down
-      - task build
-      - task dev
-
-  front:
-    description: "Starts the frontend"
-    cmds:
-      - cd frontend && npm start
+      - task down-dev
+      - task build-dev
+      - task up-dev
   

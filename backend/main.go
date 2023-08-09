@@ -5,8 +5,10 @@ import (
 	"aalsystem/pkg/fuseki"
 	"aalsystem/pkg/homeassistant"
 	"aalsystem/pkg/utils"
+	"fmt"
 	"os"
 
+	"github.com/avast/retry-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -41,9 +43,22 @@ func main() {
 	logger.Debug("Connecting to SPARQL")
 	ds := "med"
 	sparqlServer := fuseki.NewClient(ds)
-	if !sparqlServer.IsConnected() {
-		logger.Fatal("Failed to connect to SPARQL")
+	err := retry.Do(func() error {
+		if !sparqlServer.IsConnected() {
+			return fmt.Errorf("failed to connect to SPARQL server")
+		}
+		return nil
+	},
+		retry.Attempts(20),
+		retry.Delay(1),
+		retry.OnRetry(func(n uint, err error) {
+			logger.Warnf("Failed to connect to SPARQL server. Retrying (%d/%d)", n+1, 20)
+		}),
+	)
+	if err != nil {
+		logger.Fatal("Failed to connect to SPARQL server")
 	}
+
 	logger.Info("Connected to SPARQL")
 
 	// AAL System
@@ -59,7 +74,7 @@ func main() {
 	aalManager.AddSensor("sensor.heart_rate", "emfit_heartrate")
 	aalManager.AddSensor("sensor.breath_rate", "emfit_breathrate")
 
-	err := aalManager.Run()
+	err = aalManager.Run()
 	if err != nil {
 		logger.Fatal("Failed to run AAL system:", err)
 	}

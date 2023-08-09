@@ -16,17 +16,17 @@ RUN wget https://downloads.apache.org/jena/binaries/apache-jena-fuseki-4.8.0.tar
     rm apache-jena-fuseki-4.8.0.tar.gz
 
 # Copy the ontology file
-COPY /fuseki-server/aal-ontology.ttl /fuseki/aal-ontology.ttl
+COPY /aal-ontology.ttl /fuseki/aal-ontology.ttl
 
 # Copy the configuration file
-COPY /fuseki-server/config.ttl /fuseki/config.ttl
+COPY /config.ttl /fuseki/config.ttl
 
 # Copy Openllet reasoner jar files
-COPY /fuseki-server/openllet-jars /fuseki/run/extra
+COPY /openllet-jars /fuseki/run/extra
 
 # Copy the swrl rules files
-COPY /fuseki-server/general.rules /fuseki/general.rules
-COPY /fuseki-server/medical.rules /fuseki/medical.rules
+COPY /general.rules /fuseki/general.rules
+COPY /medical.rules /fuseki/medical.rules
 
 # Expose port for Fuseki
 EXPOSE 3030

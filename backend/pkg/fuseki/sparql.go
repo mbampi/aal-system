@@ -18,7 +18,7 @@ type Client struct {
 func NewClient(dataset string) *Client {
 	defaultBaseURL := url.URL{
 		Scheme: "http",
-		Host:   "localhost:3030",
+		Host:   "fuseki:3030",
 	}
 
 	return &Client{
