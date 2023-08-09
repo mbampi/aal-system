@@ -21,7 +21,7 @@ services:
 
   fuseki:
     build:
-      context: ./fuseki-server
+      context: ./fuseki
       dockerfile: dev.Dockerfile
     ports:
       - "3030:3030"

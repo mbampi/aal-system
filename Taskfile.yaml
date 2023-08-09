@@ -5,32 +5,32 @@ tasks:
   build:
     description: "Builds the fuseki, frontend and backend development images"
     cmds:
-      - docker build --progress=plain --tag fuseki --file fuseki-server/dev.Dockerfile .
+      - cd fuseki && docker build --progress=plain --tag aal-fuseki --file dev.Dockerfile .
       - cd frontend && docker build --progress=plain --tag aal-frontend --file dev.Dockerfile .
-      - cd backend && docker build --progress=plain --tag aal-backend --file dev.Dockerfile --build-arg hassio_token=$HASSIO_TOKEN .
+      - cd backend && docker build --progress=plain --tag aal-backend --file dev.Dockerfile .
   
   up:
     description: "Starts the fuseki container and waits for it to be ready to run the aal backend and frontend"
     cmds:
-      - docker run -d -p 3030:3030 --name fuseki-server fuseki 
+      - docker run -d -p 3030:3030 --name aal-fuseki aal-fuseki 
       - bash -c "while ! curl -s http://localhost:3030/$/ping; do sleep 1; done"
       - docker run -d -e HASSIO_TOKEN=$HASSIO_TOKEN -p 8080:8080 --name aal-backend aal-backend 
       - docker run -d -p 3000:3000 --name aal-frontend aal-frontend
   
   down:
-    description: "Stops and removes the fuseki container"
+    description: "Stops and removes the containers"
     cmds:
-      - docker stop fuseki-server
-      - docker rm fuseki-server
+      - docker stop aal-fuseki
+      - docker rm aal-fuseki
       - docker stop aal-backend
       - docker rm aal-backend
       - docker stop aal-frontend
       - docker rm aal-frontend
   
   update:
-    description: "Update the fuseki image"
+    description: "Update the images and restart the containers"
     cmds:
-      - task down-dev
-      - task build-dev
-      - task up-dev
+      - task down
+      - task build
+      - task up
   
