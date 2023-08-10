@@ -12,8 +12,51 @@
 #               Medical Rules
 # ---------------------------------------------
 
-# if the heart rate is above 75 trigger a heartrate event
-# associate the event with the observation that triggered it
+
+# ------------------------
+# ------- Allergy --------
+# ------------------------
+
+# Allergy: patient has allergy to what he is taking as medication.
+# AdverseReaction = 281647001
+[AllergyRule:
+    (?patient rdf:type sct:116154003)
+    (?patient :hasPropensityToAdverseReaction ?substanceAllergy)
+    (?substanceAllergy sct:hasCausativeAgent ?substance)
+    (?patient :takesMedication ?medication)
+    (?medication sct:hasActiveIngredient ?substance)
+    -> 
+    (?patient :hasFinding sct:281647001)
+]
+
+
+# ------------------------
+# --- Opioid Allergy -----
+# ------------------------
+
+# Opioid Allergy: patient has allergy to opioids
+[OpioidAllergyRule:
+    (?patient rdf:type sct:116154003)
+    (?patient :hasPropensityToAdverseReaction ?substanceAllergy)
+    (?substanceAllergy sct:hasCausativeAgent ?substance)
+    (?patient :takesMedication ?medication)
+    (?medication sct:hasActiveIngredient ?substance)
+    (?o rdf:type sosa:Observation)
+    (?o sosa:madeBySensor ?s)
+    (?o sosa:observes sct:364075005) 
+    (?o sosa:hasSimpleResult ?r)
+    greaterThan(?r, 90)
+    -> 
+    (?patient :hasFinding sct:292045009) 
+    (?o :inferred sct:292045009)
+]
+
+
+# ------------------------
+# ----- Heart Rate -------
+# ------------------------
+
+# Tachycardia: heart rate is above 100
 # HeartRate = 364075005
 # Tachycardia = 3424008
 # Patient = 116154003
@@ -21,30 +64,68 @@
     (?o rdf:type sosa:Observation) 
     (?o sosa:observes sct:364075005)  
     (?o sosa:hasSimpleResult ?r) 
-    greaterThan(?r, 80)
+    greaterThan(?r, 100)
     (?patient rdf:type sct:116154003)
     -> 
     (?patient :hasFinding sct:3424008)
     (?o :inferred sct:3424008)
 ]
 
-# if the heart rate is below 75 trigger a heartrate event
-# associate the event with the observation that triggered it
+# Bradycardia: heart rate is below 60
 # HeartRate = 364075005
 # Bradycardia = 48867003
 [BradycardiaRule:
     (?o rdf:type sosa:Observation) 
     (?o sosa:observes sct:364075005)
     (?o sosa:hasSimpleResult ?r) 
-    lessThan(?r, 75)
+    greaterThan(?r, 0)
+    lessThan(?r, 60)
     (?patient rdf:type sct:116154003)
     -> 
     (?patient :hasFinding sct:48867003) 
     (?o :inferred sct:48867003)
 ]
 
-# if the patient has diabetes and the blood glucose is above 200 trigger a hyperglycemia finding
-# associate the finding with the observation that triggered it
+
+# ----------------------------
+# ----- Respiratory Rate -----
+# ----------------------------
+
+# Tachypnea: respiratory rate is above 20
+# RespiratoryRate = 86290005
+# Tachypnea = 271823003
+[TachypneaRule:
+    (?o rdf:type sosa:Observation) 
+    (?o sosa:observes sct:86290005)
+    (?o sosa:hasSimpleResult ?r) 
+    greaterThan(?r, 20)
+    (?patient rdf:type sct:116154003)
+    -> 
+    (?patient :hasFinding sct:271823003) 
+    (?o :inferred sct:271823003)
+]
+
+# Bradypnea: respiratory rate is below 12
+# RespiratoryRate = 86290005
+# Bradypnea = 86684002
+[BradypneaRule:
+    (?o rdf:type sosa:Observation) 
+    (?o sosa:observes sct:86290005)  
+    (?o sosa:hasSimpleResult ?r) 
+    greaterThan(?r, 0)
+    lessThan(?r, 12)
+    (?patient rdf:type sct:116154003)
+    -> 
+    (?patient :hasFinding sct:86684002) 
+    (?o :inferred sct:86684002)
+]
+
+
+# ------------------------
+# ---- Blood Glucose -----
+# ------------------------
+
+# Hyperglycemia: blood glucose is above 200
 # Diabetes = 73211009
 # Blood Glucose Level = 365812005
 # Hyperglycemia = 80394007
@@ -62,8 +143,7 @@
     (?o :inferred sct:80394007)
 ]
 
-# if the patient has diabetes and the blood glucose is below 70 trigger a hypoglycemia finding
-# associate the finding with the observation that triggered it
+# Hypoglycemia: blood glucose is below 70
 # Diabetes = 73211009
 # Blood Glucose Level = 365812005
 # Hypoglycemia = 302866003
@@ -75,6 +155,7 @@
     (?o sosa:madeBySensor ?s)
     (?o sosa:observes sct:365812005) 
     (?o sosa:hasSimpleResult ?r)
+    greaterThan(?r, 0)
     lessThan(?r, 70)
     -> 
     (?patient :hasFinding sct:302866003) 

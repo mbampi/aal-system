@@ -13,6 +13,12 @@ Enabling SPARQL queries to be smartly performed with the reasoning engine, provi
 ### Web UI
 ![web ui](web-ui.png "Web UI")
 
+## Repository Structure
+
+- [backend](backend/README.md)
+- [frontend](frontend/README.md)
+- [fuseki](fuseki/README.md)
+
 ## System capabilities:
 
 - [X] Connects to Home Assistant (Smart Home)
