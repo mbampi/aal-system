@@ -45,12 +45,7 @@ func (o *Observation) InsertQuery() Query {
 	builder.WriteString(` OPTIONAL {` + "\n")
 	builder.WriteString(`	:` + obsID + ` rdf:type sosa:Observation .` + "\n")
 	builder.WriteString(`	:` + obsID + ` ?a ?b .` + "\n")
-	builder.WriteString("}" + "\n")
-	// builder.WriteString(`	:` + obsID + ` rdf:type sosa:Observation .` + "\n")
-	// builder.WriteString(`	:` + obsID + ` sosa:hasSimpleResult ?old_value .` + "\n")
-	// builder.WriteString(`	:` + obsID + ` sosa:madeBySensor :` + o.Sensor + ` .` + "\n")
-	// builder.WriteString(`	:` + obsID + ` sosa:resultTime ?old_timestamp .` + "\n")
-	// builder.WriteString(" }" + "\n")
+	builder.WriteString("  }" + "\n")
 	builder.WriteString("}")
 
 	return Query(builder.String())
