@@ -7,7 +7,6 @@
 
 # These ontologies are too large to be stored in Git (around 700MB each)
 snomedct.ttl
-aal-ontology.ttl
 
 # Go live reload - Air
 .air.toml

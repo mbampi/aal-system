@@ -46,9 +46,9 @@
     fuseki:name "med" ;
     fuseki:serviceQuery "sparql" ;
     fuseki:serviceUpdate "update" ;
-    fuseki:serviceUpload "upload" ;
+    # fuseki:serviceUpload "upload" ;
     fuseki:serviceReadWriteGraphStore "data" ;
-    fuseki:serviceReadGraphStore "get" ;
+    # fuseki:serviceReadGraphStore "get" ;
     fuseki:dataset :dataset ;
     fuseki:allowDatasetUpdate true ;
     .

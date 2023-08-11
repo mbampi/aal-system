@@ -28,6 +28,9 @@ COPY /openllet-jars /fuseki/run/extra
 COPY /general.rules /fuseki/general.rules
 COPY /medical.rules /fuseki/medical.rules
 
+# optimize memory consumption
+ENV JAVA_OPTS="-Xmx2g"
+
 # Expose port for Fuseki
 EXPOSE 3030
 
