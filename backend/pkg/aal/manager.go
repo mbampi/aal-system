@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/avast/retry-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -76,6 +77,33 @@ func (m *Manager) Run() error {
 		return fmt.Errorf("failed to inititalize Home Assistant websocket connection: %w", err)
 	}
 
+	err = retry.Do(func() error {
+		if !m.sparql.IsConnected() {
+			return fmt.Errorf("failed to connect to SPARQL server")
+		}
+		return nil
+	},
+		retry.Attempts(20),
+		retry.Delay(1),
+		retry.OnRetry(func(n uint, err error) {
+			m.logger.Warnf("Failed to connect to SPARQL server. Retrying (%d/%d)", n+1, 20)
+		}),
+	)
+	if err != nil {
+		m.logger.Fatal("Failed to connect to SPARQL server")
+	}
+	m.logger.Info("Connected to SPARQL")
+
+	// real sensors
+	// m.AddSensor("sensor.emfitqs_000ebc_heart_rate", "emfit_heartrate")
+	// m.AddSensor("sensor.emfitqs_000ebc_respiratory_rate", "emfit_breathrate")
+	// m.AddSensor("binary_sensor.emfitqs_000ebc_bed_presence", "emfit_bedpresence")
+
+	// simulated sensors
+	m.AddSensor("sensor.relative_humidity", "bedroom_humidity")
+	m.AddSensor("sensor.heart_rate", "emfit_heartrate")
+	m.AddSensor("sensor.breath_rate", "emfit_breathrate")
+
 	// Listen to Home Assistant events via websocket
 	events, err := m.hass.ListenEvents()
 	if err != nil {
@@ -126,7 +154,7 @@ func (m *Manager) loadInitialStates() error {
 func (m *Manager) handleStateChangeEvent(event *homeassistant.Event) error {
 	sensor, ok := m.sensors[event.EntityID]
 	if !ok {
-		m.logger.Tracef("Sensor %s not found", event.EntityID)
+		m.logger.Debugf("Sensor %s not found", event.EntityID)
 		return nil
 	}
 	obs := Observation{
