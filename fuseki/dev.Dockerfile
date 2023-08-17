@@ -11,9 +11,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Download and install Fuseki
-RUN wget https://downloads.apache.org/jena/binaries/apache-jena-fuseki-4.8.0.tar.gz && \
-    tar xzf apache-jena-fuseki-4.8.0.tar.gz && \
-    rm apache-jena-fuseki-4.8.0.tar.gz
+RUN wget https://downloads.apache.org/jena/binaries/apache-jena-fuseki-4.9.0.tar.gz && \
+    tar xzf apache-jena-fuseki-4.9.0.tar.gz && \
+    rm apache-jena-fuseki-4.9.0.tar.gz
 
 # Copy the ontology file
 COPY /aal-ontology.ttl /fuseki/aal-ontology.ttl
@@ -35,4 +35,4 @@ ENV JAVA_OPTS="-Xmx2g"
 EXPOSE 3030
 
 # Run Fuseki server with provided configuration on startup
-CMD ["./apache-jena-fuseki-4.8.0/fuseki-server", "--config=/fuseki/config.ttl"]
+CMD ["./apache-jena-fuseki-4.9.0/fuseki-server", "--config=/fuseki/config.ttl"]
