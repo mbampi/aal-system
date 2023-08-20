@@ -18,9 +18,10 @@ type Manager struct {
 
 	sensors map[string]Sensor // home assistant entity -> ontology sensor name
 
-	currentFindings []Finding
-	findingsChan    chan *Finding
-	observationChan chan *Observation
+	currentFindings   []Finding
+	findingsChan      chan *Finding
+	observationChan   chan *Observation
+	receivedEventTime time.Time
 }
 
 // NewManager creates a new AAL system manager.
@@ -67,6 +68,8 @@ func (m *Manager) AddSensor(entityID, sensorID string) {
 // It connects to Home Assistant and SPARQL, and starts listening to Home Assistant events.
 func (m *Manager) Run() error {
 	m.logger.Info("Starting AAL System")
+
+	initMetrics()
 
 	server := NewServer(m.logger, m.findingsChan, m.observationChan)
 	go server.Run()
@@ -157,22 +160,29 @@ func (m *Manager) handleStateChangeEvent(event *homeassistant.Event) error {
 		m.logger.Debugf("Sensor %s not found", event.EntityID)
 		return nil
 	}
+	if event.EntityID == "sensor.heart_rate" {
+		m.receivedEventTime = time.Now()
+	}
 	obs := Observation{
 		Name:      sensor.ObservableProperty,
 		Sensor:    sensor.ID,
 		Value:     event.State,
 		Timestamp: time.Now(),
 	}
+	if event.EntityID == "sensor.heart_rate" {
+		duration := time.Since(m.receivedEventTime)
+		eventToObservationDuration.WithLabelValues(obs.Name).Observe(duration.Seconds())
+	}
+	observationsCount.WithLabelValues(obs.Name).Inc()
 	m.observationChan <- &obs
 
 	// Insert observation into ontology
 	m.logger.Debugf("Inserting observation: %s (%s)", obs.Sensor, obs.Value)
-	startTime := time.Now()
 	err := m.insertObservation(&obs)
 	if err != nil {
 		return fmt.Errorf("failed to insert observation: %w", err)
 	}
-	m.logger.Infof("Inserted observation: sensor=%s value=%s (%s)", obs.Sensor, obs.Value, time.Since(startTime))
+	m.logger.Infof("Inserted observation: sensor=%s value=%s", obs.Sensor, obs.Value)
 
 	// Check finding
 	m.logger.Trace("Checking findings activated by rules")
@@ -217,6 +227,11 @@ func (m *Manager) checkFindings() error {
 			continue
 		}
 		m.logger.Infof("++ New finding: %s has %s (%s)", finding.Patient, finding.Name, finding.Value)
+		if finding.Name == "Tachycardia" {
+			duration := time.Since(m.receivedEventTime)
+			eventToFindingDuration.WithLabelValues(finding.Name).Observe(duration.Seconds())
+		}
+		findingsCount.WithLabelValues(finding.Name).Inc()
 		m.findingsChan <- &finding
 	}
 	m.currentFindings = findings

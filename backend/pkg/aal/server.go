@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 )
 
@@ -44,6 +45,7 @@ func (s *Server) Run() error {
 	go s.watchAndSendObservations()
 
 	s.logger.Info("Serving findings on port 8080")
+	http.HandleFunc("/metrics", promhttp.Handler().ServeHTTP)
 	http.HandleFunc("/ws", s.websocketHandler)
 	return http.ListenAndServe(":8080", nil)
 }
