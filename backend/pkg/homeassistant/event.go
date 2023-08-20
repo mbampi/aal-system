@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 // Event represents a Home Assistant event.
@@ -94,8 +96,20 @@ func (c *Client) ListenEvents() (<-chan Event, error) {
 			var event wsEvent
 			err := c.wsConn.ReadJSON(&event)
 			if err != nil {
-				c.logger.Debugf("error reading event: %s", err)
-				return
+				c.logger.Errorf("error reading event: %s", err)
+				// if the connection is closed, try to reconnect
+				if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+					c.logger.Warn("websocket connection closed, trying to reconnect")
+					err = c.InitWebsocket()
+					if err != nil {
+						c.logger.Errorf("failed to reconnect to websocket: %s", err)
+						return
+					}
+					c.logger.Info("reconnected to websocket")
+					continue
+				} else {
+					return
+				}
 			}
 			events <- wsEventToEvent(event)
 		}
