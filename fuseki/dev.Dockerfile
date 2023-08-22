@@ -21,18 +21,15 @@ COPY /aal-ontology.ttl /fuseki/aal-ontology.ttl
 # Copy the configuration file
 COPY /config.ttl /fuseki/config.ttl
 
-# Copy Openllet reasoner jar files
-COPY /openllet-jars /fuseki/run/extra
-
 # Copy the swrl rules files
 COPY /general.rules /fuseki/general.rules
 COPY /medical.rules /fuseki/medical.rules
 
-# optimize memory consumption
-ENV JAVA_OPTS="-Xmx2g"
-
 # Expose port for Fuseki
 EXPOSE 3030
+
+# Optimize Fuseki Memory
+ENV JVM_ARGS="-Xmx2g -Xms512m"
 
 # Run Fuseki server with provided configuration on startup
 CMD ["./apache-jena-fuseki-4.9.0/fuseki-server", "--config=/fuseki/config.ttl"]
