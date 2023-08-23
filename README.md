@@ -7,11 +7,16 @@ Ontology-Based Health Monitoring System For Ambient Assisted Living
 The goal of this system is to be a semantic connector between Smart Home IoT data and a Health ontology.
 Enabling SPARQL queries to be smartly performed with the reasoning engine, providing information for a better AAL management.
 
+
+### AAL Ontology
+
+![aal ontology](images/aal-ontology.png "AAL Ontology")
+
 ### System Architecture
-![system architecture](sys-architecture.png "System Architecture")
+![system architecture](images/sys-architecture.png "System Architecture")
 
 ### Web UI
-![web ui](web-ui.png "Web UI")
+![web ui](images/web-ui.png "Web UI")
 
 ## Repository Structure
 
@@ -46,7 +51,6 @@ Enabling SPARQL queries to be smartly performed with the reasoning engine, provi
 ### Pre-requisites to Development
 - [Docker](https://docs.docker.com/engine/install/)
 - [docker-compose](https://docs.docker.com/compose/install/)
-- [Task](https://taskfile.dev/#/installation)
 - [Go](https://golang.org/doc/install)
 - [Home Assistant](https://www.home-assistant.io/docs/installation/)
   - Should be running (usually in a Raspberry Pi) in the same network as this machine 
@@ -57,9 +61,9 @@ Enabling SPARQL queries to be smartly performed with the reasoning engine, provi
 
 ```bash
 HASSIO_TOKEN=<your home assistant token>
-```
 
-##
+GF_SECURITY_ADMIN_PASSWORD=<your grafana admin password>
+```
 
 ### Build
 
